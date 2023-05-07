@@ -1,43 +1,28 @@
-import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Text } from '@chakra-ui/react';
+import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Spinner, Text } from '@chakra-ui/react';
 import { FC, useState } from 'react';
 
 interface CreateModalProps {
     onClose?: () => void;
-    isOpen: boolean
+    isOpen: boolean;
+    nftsArray: NftsArray[]
+    loading: boolean
 }
 
-export const CreateModal: FC<CreateModalProps> = ({ isOpen, onClose }) => {
-    const [address, setAddress] = useState('');
-    const [nft, setNft] = useState('')
+interface NftsArray {
+    identifier: string
+    url: string
+    fileType: string
+}
 
-    const getNFTUrl = async ()=>{
+export const CreateModal: FC<CreateModalProps> = ({ isOpen, onClose, nftsArray, loading }) => {
+    const [address, setAddress] = useState('');
+    const [nft, setNft] = useState<NftsArray | null>(null)
+
+    const getNFTUrl = async () => {
         const response = await fetch("https://devnet-api.multiversx.com/nfts/FACES-dd0aec-0164")
         const data = await response.json();
         console.log(data.url);
     }
-
-    const getNFTs= async ()=>{
-        const response = await fetch("https://devnet-api.multiversx.com/accounts/erd1lpg4rqgeshusq0n73zzflwkzs0f6mxr6kt3ttx2v7mqktcxyn60qghnw70/nfts")
-        const data = await response.json();
-
-        for(let dataIndex = 0; dataIndex < data.length; dataIndex++){
-            const dataObject = data[dataIndex];
-            if(dataObject.type === "NonFungibleESDT"){
-                if(validURL(dataObject.url))
-                    console.log(dataObject)
-            }
-        }
-    }
-
-    function validURL(str:string) {
-        var pattern = new RegExp('^(https?:\\/\\/)?'+ 
-          '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|'+
-          '((\\d{1,3}\\.){3}\\d{1,3}))'+
-          '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*'+
-          '(\\?[;&a-z\\d%_.~+=-]*)?'+ 
-          '(\\#[-a-z\\d_]*)?$','i');
-        return !!pattern.test(str);
-      }
 
     return (
         <Modal
@@ -62,15 +47,59 @@ export const CreateModal: FC<CreateModalProps> = ({ isOpen, onClose }) => {
                             setAddress(e.target.value)
                         }} />
                     </div>
-                    <div className="contractInputs">
-                        <label>NFT identifier</label>
-                        <input type="text" value={nft} onChange={(e) => {
-                            setNft(e.target.value)
-                        }} />
-                    </div>
+                    {nft !== null && <div className='selectNFT'>
+                        {nft.fileType.startsWith("video") ? <div onClick={() => {
+                            setNft(null)
+                        }}><video controls src={nft.url}></video></div> : <img onClick={() => {
+                            setNft(null)
+                        }} src={nft.url} alt={nft.identifier} />}
+                        <h2 style={{
+                            marginTop: "5px",
+                            textAlign: "center"
+                        }}>{nft.identifier}</h2>
+                    </div>}
+                    {nft === null && nftsArray.length > 0 && <div className='nftsContainer'>
+                        {nftsArray.map((nft) => {
+                            if (nft.fileType.startsWith("video")) {
+                                return (
+                                    <div key={nft.identifier} className='videoContainer' onClick={() => {
+                                        setNft(nft)
+                                    }}>
+                                        <video controls src={nft.url}></video>
+                                    </div>
+                                )
+                            } else {
+                                return (
+                                    <div key={nft.identifier} className='videoContainer'>
+                                        <img src={nft.url} alt={nft.identifier} onClick={() => {
+                                            setNft(nft)
+                                        }} />
+                                    </div>
+                                )
+                            }
+                        })}
+                    </div>}
+                    {loading === false && nftsArray.length === 0 && <div>
+                        <h2 style={{
+                            textAlign: "center"
+                        }}>No NFTs found</h2>
+                    </div>}
+                    {loading === true && <div style={{
+                        display:"grid",
+                        placeContent:"center"
+                    }}>
+                        <Spinner
+                            speed='0.9s'
+                            width="90px"
+                            height="90px"
+                            thickness='10px'
+                            color='rgb(3,151,91)'
+                            marginBottom="8px"
+                        />
+                    </div>}
                 </ModalBody>
                 <ModalFooter>
-                    <button onClick={getNFTs} className="deployModalButton"><i className="bi bi-lightning-charge-fill" style={{
+                    <button className="deployModalButton"><i className="bi bi-lightning-charge-fill" style={{
                         color: "#00e673",
                         fontSize: "calc(16px + 0.1vw)",
                         marginRight: "2px"

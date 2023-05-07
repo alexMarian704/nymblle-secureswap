@@ -56,8 +56,8 @@ const Home: NextPage = () => {
         </>
         }
       >
-        {/* <NewSwap /> */}
-        <Swap />
+        <NewSwap />
+        {/* <Swap /> */}
       </Authenticated>
     </MainLayout>
   );

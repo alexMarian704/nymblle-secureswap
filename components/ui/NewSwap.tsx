@@ -1,12 +1,54 @@
 import { Box, Flex, useDisclosure } from '@chakra-ui/react';
-import { FC, PropsWithChildren } from 'react';
+import { FC, PropsWithChildren, useEffect, useState } from 'react';
 import { CreateModal } from './CreateModal';
 
 interface NewSwapProps {
 }
 
+interface NftsArray {
+    identifier: string
+    url: string
+    fileType: string
+}
+
 export const NewSwap: FC<PropsWithChildren<NewSwapProps>> = ({ }) => {
     const { isOpen, onClose, onOpen } = useDisclosure();
+    const [nftsArray, setNftsArray] = useState<NftsArray[]>([])
+    const [loading, setLoading] = useState<boolean>(true);
+
+    //erd1e8snqehs6d69dsdscggtsqz39ezd0lurmck9tmjkek0q55je3ymsdhcmkk
+    //erd17yh539cvfm7ez4xsdc7f3hl6pmxkme2z56kc6rtrdfu252eah6yqjg83rx
+
+    const getNFTs = async () => {
+        const response = await fetch("https://api.multiversx.com/accounts/erd1e8snqehs6d69dsdscggtsqz39ezd0lurmck9tmjkek0q55je3ymsdhcmkk/nfts")
+        const data = await response.json();
+
+        let nftsArray = [];
+        for (let dataIndex = 0; dataIndex < data.length; dataIndex++) {
+            const dataObject = data[dataIndex];
+            if (dataObject.type === "NonFungibleESDT") {
+                if (validURL(dataObject.url)) {
+                    nftsArray.push({ identifier: dataObject.identifier, url: dataObject.url, fileType: dataObject.media[0].fileType })
+                }
+            }
+        }
+        setNftsArray(nftsArray)
+        setLoading(false);
+    }
+
+    function validURL(str: string) {
+        var pattern = new RegExp('^(https?:\\/\\/)?' +
+            '((([a-z\\d]([a-z\\d-]*[a-z\\d])*)\\.)+[a-z]{2,}|' +
+            '((\\d{1,3}\\.){3}\\d{1,3}))' +
+            '(\\:\\d+)?(\\/[-a-z\\d%_.~+]*)*' +
+            '(\\?[;&a-z\\d%_.~+=-]*)?' +
+            '(\\#[-a-z\\d_]*)?$', 'i');
+        return !!pattern.test(str);
+    }
+
+    useEffect(()=>{
+        getNFTs();
+    },[])
 
     return (
         <Box
@@ -28,7 +70,8 @@ export const NewSwap: FC<PropsWithChildren<NewSwapProps>> = ({ }) => {
                     borderRadius:"50vh",
                     height:"calc(80px + 0.6vw)",
                     display:"grid",
-                    placeContent:"center"
+                    placeContent:"center",
+                    outline:"none"
                 }} onClick={onOpen}>
                     <i className="bi bi-plus-circle icon-hover"
                         style={{
@@ -37,7 +80,7 @@ export const NewSwap: FC<PropsWithChildren<NewSwapProps>> = ({ }) => {
                     ></i>
                 </button>
             </Flex>
-            <CreateModal isOpen={isOpen} onClose={onClose} />
+            <CreateModal isOpen={isOpen} onClose={onClose} nftsArray={nftsArray} loading={loading} />
         </Box>
     );
 };

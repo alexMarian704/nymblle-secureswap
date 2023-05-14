@@ -23,7 +23,10 @@
     "@emotion/styled": "11.10.6",
     "@fontsource/poppins": "4.5.10",
     "@multiversx/sdk-core": "12.2.0",
+    "@multiversx/sdk-network-providers": "^1.4.0",
+    "@multiversx/sdk-wallet": "^4.1.0",
     "@useelven/core": "0.2.1",
+    "bech32": "^2.0.0",
     "buffer": "6.0.3",
     "crypto-browserify": "3.12.0",
     "next": "13.2.3",
@@ -36,6 +39,7 @@
     "stream-browserify": "3.0.0"
   },
   "devDependencies": {
+    "@types/bech32": "^1.1.4",
     "@types/node": "18.16.0",
     "@types/qrcode": "1.5.0",
     "@types/react": "18.2.0",

@@ -23,7 +23,7 @@ export const EGLDComponent: FC<EGLDComponentProps> = ({ }) => {
         <div className='egldInputComponent'>
             <div>
                 <img src="/egldimage.jpg" alt="MultiversX Logo" />
-                <h2>EGLD</h2>
+                <h3>EGLD</h3>
             </div>
             <input type="text" placeholder='0.0' value={egldValue} onChange={(e)=>{
                 setEgldValue(e.target.value);

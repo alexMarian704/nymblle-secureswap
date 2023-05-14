@@ -1,6 +1,7 @@
 import { Box, Flex, useDisclosure } from '@chakra-ui/react';
 import { FC, PropsWithChildren, useEffect, useState } from 'react';
 import { CreateModal } from './CreateModal';
+import { useAccount } from '@useelven/core';
 
 interface NewSwapProps {
 }
@@ -15,12 +16,13 @@ export const NewSwap: FC<PropsWithChildren<NewSwapProps>> = ({ }) => {
     const { isOpen, onClose, onOpen } = useDisclosure();
     const [nftsArray, setNftsArray] = useState<NftsArray[]>([])
     const [loading, setLoading] = useState<boolean>(true);
+    const { address } = useAccount();
 
     //erd1e8snqehs6d69dsdscggtsqz39ezd0lurmck9tmjkek0q55je3ymsdhcmkk
     //erd17yh539cvfm7ez4xsdc7f3hl6pmxkme2z56kc6rtrdfu252eah6yqjg83rx
 
     const getNFTs = async () => {
-        const response = await fetch("https://api.multiversx.com/accounts/erd1e8snqehs6d69dsdscggtsqz39ezd0lurmck9tmjkek0q55je3ymsdhcmkk/nfts")
+        const response = await fetch(`https://devnet-api.multiversx.com/accounts/${address}/nfts`)
         const data = await response.json();
 
         let nftsArray = [];

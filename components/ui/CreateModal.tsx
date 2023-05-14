@@ -1,5 +1,8 @@
 import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Spinner, Text } from '@chakra-ui/react';
-import { FC, useState } from 'react';
+import { Address, AddressValue, BigUIntValue, BytesValue, ContractCallPayloadBuilder, ContractFunction, TokenIdentifierValue, Transaction, TypedValue, U64Value } from '@multiversx/sdk-core/out';
+import { ApiNetworkProvider } from '@multiversx/sdk-network-providers/out';
+import { useAccount, useNetwork, useTransaction } from '@useelven/core';
+import { FC, useCallback, useEffect, useState } from 'react';
 
 interface CreateModalProps {
     onClose?: () => void;
@@ -17,12 +20,47 @@ interface NftsArray {
 export const CreateModal: FC<CreateModalProps> = ({ isOpen, onClose, nftsArray, loading }) => {
     const [address, setAddress] = useState('');
     const [nft, setNft] = useState<NftsArray | null>(null)
+    const [nftNonce, setNftNonce] = useState(0)
+    const [nftCollection, setNftCollection] = useState('');
+    const { address: userAddress } = useAccount()
+    const { pending, triggerTx, transaction, txResult, error } = useTransaction();
 
     const getNFTUrl = async () => {
-        const response = await fetch("https://devnet-api.multiversx.com/nfts/FACES-dd0aec-0164")
+        const response = await fetch(`https://devnet-api.multiversx.com/nfts/${nft?.identifier}`)
         const data = await response.json();
-        console.log(data.url);
+        console.log(data);
+        setNftNonce(data.nonce)
+        setNftCollection(data.collection);
     }
+
+    const sendNft = useCallback(async () => {
+        const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
+
+        let func = new ContractFunction("ESDTNFTTransfer")
+        const s = new AddressValue(new Address('erd1lpg4rqgeshusq0n73zzflwkzs0f6mxr6kt3ttx2v7mqktcxyn60qghnw70'))
+        const contractAddress = 'erd1qqqqqqqqqqqqqpgqcvp6jd8c8skujd24x974xam203lzwstpn60qu5hx9q'
+        const address = Address.fromBech32(contractAddress);
+
+        const data = new ContractCallPayloadBuilder()
+            .setFunction(func)
+            .setArgs([BytesValue.fromUTF8(nftCollection), new U64Value(nftNonce), new BigUIntValue(1), new AddressValue(address), BytesValue.fromUTF8("initiate_swap"), new TokenIdentifierValue(nftCollection), new U64Value(nftNonce), new AddressValue(new Address(address))])
+            .build();
+
+        console.log(userAddress)
+
+        triggerTx({
+            address: userAddress,
+            gasLimit: 80000000,
+            value: 0,
+            data,
+        });
+    }, [triggerTx])
+
+    useEffect(() => {
+        if (nft !== null) {
+            getNFTUrl();
+        }
+    }, [nft])
 
     return (
         <Modal
@@ -85,8 +123,8 @@ export const CreateModal: FC<CreateModalProps> = ({ isOpen, onClose, nftsArray, 
                         }}>No NFTs found</h2>
                     </div>}
                     {loading === true && <div style={{
-                        display:"grid",
-                        placeContent:"center"
+                        display: "grid",
+                        placeContent: "center"
                     }}>
                         <Spinner
                             speed='0.9s'
@@ -99,7 +137,7 @@ export const CreateModal: FC<CreateModalProps> = ({ isOpen, onClose, nftsArray, 
                     </div>}
                 </ModalBody>
                 <ModalFooter>
-                    <button className="deployModalButton"><i className="bi bi-lightning-charge-fill" style={{
+                    <button onClick={sendNft} className="deployModalButton"><i className="bi bi-lightning-charge-fill" style={{
                         color: "#00e673",
                         fontSize: "calc(16px + 0.1vw)",
                         marginRight: "2px"

@@ -1,5 +1,5 @@
 import { Box } from '@chakra-ui/react';
-import { FC, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { EGLDComponent } from './EGDLComponent';
 import { NFTComponent } from './NFTComponent';
 import { ApiNetworkProvider } from '@multiversx/sdk-network-providers/out';
@@ -12,7 +12,13 @@ interface SwapProps {
 
 export const Swap: FC<SwapProps> = ({ }) => {
     const { address: userAddress } = useAccount();
-    const [userType, setUserType] = useState(0)
+    const [sender, setSender] = useState("");
+    const [receiver, setReceiver] = useState("");
+    const [receiverApprovement, setReceiverApprovement] = useState(false);
+    const [senderApprovement, setSenderApprovement] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [nftId, setNftID] = useState("")
+    const [nftNonce, setNftNonce] = useState("")
 
     const getUserType = async () => {
         const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
@@ -20,11 +26,9 @@ export const Swap: FC<SwapProps> = ({ }) => {
         const contractAddress = new Address("erd1qqqqqqqqqqqqqpgqcvp6jd8c8skujd24x974xam203lzwstpn60qu5hx9q")
         let contract = new SmartContract({ address: contractAddress })
 
-        const address = Address.fromBech32('erd1qqqqqqqqqqqqqpgqcvp6jd8c8skujd24x974xam203lzwstpn60qu5hx9q');
-
         let query = contract.createQuery({
             func: new ContractFunction("getSwap"),
-            args: [new AddressValue(address)],
+            args: [new AddressValue(Address.fromBech32(userAddress))],
             caller: new Address(userAddress)
         });
 
@@ -33,12 +37,35 @@ export const Swap: FC<SwapProps> = ({ }) => {
         let queryResponse = await apiProvider.queryContract(query)
         let bundle = resultsParser.parseUntypedQueryResponse(queryResponse);
 
-        console.log(decodeSwapData(bundle.values[0]))
-        // if(senderAddress === userAddress){
-        //     console.log("e sender")
-        // }else{
-        //     console.log("ceererer")
-        // }
+        const decodeData = decodeSwapData(bundle.values[0]);
+        //console.log(decodeSwapData(bundle.values[0]));
+
+        const bech32AddressSender = Address.fromHex(decodeData.sender).bech32();
+        const bech32AddressReceiver = Address.fromHex(decodeData.receiver).bech32();
+
+
+        let queryNounce = contract.createQuery({
+            func: new ContractFunction("getNftNonce"),
+            args: [new AddressValue(Address.fromBech32(bech32AddressSender))],
+            caller: new Address(userAddress)
+        });
+
+        let resultsParserNounce = new ResultsParser()
+        let queryResponseNounce = await apiProvider.queryContract(queryNounce)
+        let bundleNounce = resultsParserNounce.parseUntypedQueryResponse(queryResponseNounce);
+        setNftNonce(bundleNounce.values[0].toString("hex"))
+
+
+        setNftID(hexToReadableString(decodeData.nft_id))
+        //console.log(hexToReadableString(decodeData.nft_id))
+        setSender(bech32AddressSender);
+        setReceiver(bech32AddressReceiver);
+        setReceiverApprovement(decodeData.receiver_approvement);
+        setSenderApprovement(decodeData.sender_approvement)
+        setLoading(false)
+    }
+
+    const approveSwap = () => {
 
     }
 
@@ -96,11 +123,27 @@ export const Swap: FC<SwapProps> = ({ }) => {
         };
     }
 
+    function hexToReadableString(hex: string) {
+        let result = '';
+        for (let i = 0; i < hex.length; i += 2) {
+            let charCode = parseInt(hex.substr(i, 2), 16);
+            if (charCode > 0) { // ignore '0' charCodes
+                result += String.fromCharCode(charCode);
+            }
+        }
+        return result;
+    }
+
+
     const getNFTs = async () => {
         const response = await fetch("https://devnet-api.multiversx.com/accounts/erd1lpg4rqgeshusq0n73zzflwkzs0f6mxr6kt3ttx2v7mqktcxyn60qghnw70/nfts")
         const data = await response.json();
         console.log(data);
     }
+
+    useEffect(() => {
+        getUserType()
+    }, [])
 
     return (
         <Box
@@ -126,7 +169,7 @@ export const Swap: FC<SwapProps> = ({ }) => {
                         fontSize: "calc(22px + 0.1vw)",
                     }}></i></h2>
                     <div className='displayGrid'>
-                        <EGLDComponent />
+                        {(userAddress === sender && sender !== "") ? <EGLDComponent /> : <NFTComponent nftId={`${nftId}-${nftNonce}`} />}
                     </div>
                 </div>
                 <div className='inputContainer'>
@@ -135,24 +178,24 @@ export const Swap: FC<SwapProps> = ({ }) => {
                         fontSize: "calc(22px + 0.1vw)",
                     }}></i></h2>
                     <div className='displayGrid'>
-                        <NFTComponent />
+                        {(userAddress === sender && sender !== "") ? <NFTComponent nftId={`${nftId}-${nftNonce}`} /> : <EGLDComponent />}
                     </div>
                 </div>
             </div>
-            <div className='buttonsContainer'>
-                <button onClick={getUserType} className="deployModalButton" style={{
+            {loading === false && <div className='buttonsContainer'>
+                {((userAddress === sender && senderApprovement === false) || (userAddress === receiver && receiverApprovement === false)) && <button onClick={getUserType} className="deployModalButton" style={{
                     marginBottom: "6px"
                 }}><i className="bi bi-x-lg" style={{
                     color: "#ed2400",
                     fontSize: "calc(16px + 0.1vw)",
                     marginRight: "2px"
-                }}></i>Cancel</button>
-                <button className="deployModalButton"><i className="bi bi-check-lg" style={{
+                }}></i>Cancel</button>}
+                <button onClick={approveSwap} className="deployModalButton"><i className="bi bi-check-lg" style={{
                     color: "#00e673",
                     fontSize: "calc(19px + 0.1vw)",
                     marginRight: "2px"
                 }}></i>Confirm swap</button>
-            </div>
+            </div>}
         </Box>
     );
 };

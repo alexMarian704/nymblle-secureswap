@@ -18,9 +18,6 @@ export const NewSwap: FC<PropsWithChildren<NewSwapProps>> = ({ }) => {
     const [loading, setLoading] = useState<boolean>(true);
     const { address } = useAccount();
 
-    //erd1e8snqehs6d69dsdscggtsqz39ezd0lurmck9tmjkek0q55je3ymsdhcmkk
-    //erd17yh539cvfm7ez4xsdc7f3hl6pmxkme2z56kc6rtrdfu252eah6yqjg83rx
-
     const getNFTs = async () => {
         const response = await fetch(`https://devnet-api.multiversx.com/accounts/${address}/nfts`)
         const data = await response.json();

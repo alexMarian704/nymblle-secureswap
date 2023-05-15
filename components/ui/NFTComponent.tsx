@@ -1,17 +1,31 @@
 import { Box } from '@chakra-ui/react';
-import { FC } from 'react';
+import { FC, useEffect, useState } from 'react';
 
 interface NFTComponentProps {
-
+    nftId:string;
 }
 
-export const NFTComponent: FC<NFTComponentProps> = ({ }) => {
+export const NFTComponent: FC<NFTComponentProps> = ({ nftId }) => {
+    const [nftUrl, setNftUrl] = useState("");
+
+    const getNFTUrl = async () => {
+        let cleanNftId = nftId.replace(/\f/g, '');
+        const response = await fetch(`https://devnet-api.multiversx.com/nfts/${cleanNftId.trim()}`)
+        const data = await response.json();
+        console.log(data);
+        setNftUrl(data.url);
+    }
+
+    useEffect(()=>{
+        getNFTUrl();
+    },[])
+
     return (
         <div className='nftComponent'>
             <div>
-                <img src="https://ipfs.io/ipfs/bafybeibimqon4pjm54x27n6we5qohx57gd6n2mnbkxu2r6nejp3nbenk7u/38.png" alt="" />
+                <img src={nftUrl} alt="" />
             </div>
-            <h3>FACES-dd0aec-0164</h3>
+            <h3>{nftId.trim()}</h3>
         </div>
     );
 };

@@ -1,5 +1,5 @@
 import { Box } from '@chakra-ui/react';
-import { FC, useEffect, useState } from 'react';
+import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react';
 import { EGLDComponent } from './EGDLComponent';
 import { NFTComponent } from './NFTComponent';
 import { ApiNetworkProvider } from '@multiversx/sdk-network-providers/out';
@@ -7,10 +7,10 @@ import { Address, AddressValue, ContractFunction, ResultsParser, SmartContract }
 import { useAccount } from '@useelven/core';
 
 interface SwapProps {
-
+    setError: Dispatch<SetStateAction<string>>
 }
 
-export const Swap: FC<SwapProps> = ({ }) => {
+export const Swap: FC<SwapProps> = ({ setError }) => {
     const { address: userAddress } = useAccount();
     const [sender, setSender] = useState("");
     const [receiver, setReceiver] = useState("");
@@ -66,6 +66,10 @@ export const Swap: FC<SwapProps> = ({ }) => {
     }
 
     const approveSwap = () => {
+
+    }
+
+    const claim = () => {
 
     }
 
@@ -127,7 +131,7 @@ export const Swap: FC<SwapProps> = ({ }) => {
         let result = '';
         for (let i = 0; i < hex.length; i += 2) {
             let charCode = parseInt(hex.substr(i, 2), 16);
-            if (charCode > 0) { // ignore '0' charCodes
+            if (charCode > 0) {
                 result += String.fromCharCode(charCode);
             }
         }
@@ -163,26 +167,32 @@ export const Swap: FC<SwapProps> = ({ }) => {
             position="relative"
         >
             <div className='swapContainer'>
-                <div className='inputContainer'>
+                {loading === false && <div className='inputContainer'>
                     <h2>You send <i className="bi bi-arrow-bar-up" style={{
                         color: "#00e673",
                         fontSize: "calc(22px + 0.1vw)",
                     }}></i></h2>
                     <div className='displayGrid'>
-                        {(userAddress === sender && sender !== "") ? <EGLDComponent /> : <NFTComponent nftId={`${nftId}-${nftNonce}`} />}
+                        {(userAddress === receiver && receiver !== "") ? <EGLDComponent userAddress={userAddress} receiver={receiver} /> : <NFTComponent nftId={`${nftId}-${nftNonce}`} />}
                     </div>
-                </div>
-                <div className='inputContainer'>
+                </div>}
+                {loading === false && <div className='inputContainer'>
                     <h2>You receive <i className="bi bi-arrow-bar-down" style={{
                         color: "#00e673",
                         fontSize: "calc(22px + 0.1vw)",
                     }}></i></h2>
                     <div className='displayGrid'>
-                        {(userAddress === sender && sender !== "") ? <NFTComponent nftId={`${nftId}-${nftNonce}`} /> : <EGLDComponent />}
+                        {(userAddress === receiver && receiver !== "") ? <NFTComponent nftId={`${nftId}-${nftNonce}`} /> : <EGLDComponent userAddress={userAddress} receiver={receiver} />}
                     </div>
-                </div>
+                </div>}
             </div>
             {loading === false && <div className='buttonsContainer'>
+                {((userAddress === sender && senderApprovement === true) && (userAddress === receiver && receiverApprovement === true)) && <h2 style={{
+                    width: "100%",
+                    textAlign: "center",
+                    fontSize: "calc(19px + 0.1vw)",
+                    marginBottom: "8px"
+                }}>Swap has ended, please claim</h2>}
                 {((userAddress === sender && senderApprovement === false) || (userAddress === receiver && receiverApprovement === false)) && <button onClick={getUserType} className="deployModalButton" style={{
                     marginBottom: "6px"
                 }}><i className="bi bi-x-lg" style={{
@@ -190,11 +200,16 @@ export const Swap: FC<SwapProps> = ({ }) => {
                     fontSize: "calc(16px + 0.1vw)",
                     marginRight: "2px"
                 }}></i>Cancel</button>}
-                <button onClick={approveSwap} className="deployModalButton"><i className="bi bi-check-lg" style={{
+                {((userAddress === sender && senderApprovement === false) || (userAddress === receiver && receiverApprovement === false)) && <button onClick={approveSwap} className="deployModalButton"><i className="bi bi-check-lg" style={{
                     color: "#00e673",
                     fontSize: "calc(19px + 0.1vw)",
                     marginRight: "2px"
-                }}></i>Confirm swap</button>
+                }}></i>Confirm swap</button>}
+                {((userAddress === sender && senderApprovement === true) && (userAddress === receiver && receiverApprovement === true)) && <button onClick={claim} className="deployModalButton"><i className="bi bi-check2-all" style={{
+                    color: "#00e673",
+                    fontSize: "calc(19px + 0.1vw)",
+                    marginRight: "2px"
+                }}></i>Claim</button>}
             </div>}
         </Box>
     );

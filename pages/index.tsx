@@ -19,6 +19,7 @@ import { useEffect, useState } from 'react';
 const Home: NextPage = () => {
   const { address: userAddress } = useAccount();
   const [isUser, setIsUser] = useState(0);
+  const [error, setError] = useState("");
 
   const getContractData = async () => {
     const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
@@ -105,8 +106,15 @@ const Home: NextPage = () => {
           </>
         }
       >
-        {isUser === 2 && <NewSwap />}
-        {isUser === 1 && <Swap />}
+        {isUser === 2 && <NewSwap setError={setError} />}
+        {isUser === 1 && <Swap setError={setError} />}
+        <p style={{
+          width:"100%",
+          textAlign:"center",
+          marginTop:"20px",
+          fontSize:"calc(20px + 0.1vw)",
+          color:"#de1b0d"
+        }}>{error}</p>
       </Authenticated>
     </MainLayout>
   );

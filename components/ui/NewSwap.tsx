@@ -1,9 +1,10 @@
 import { Box, Flex, useDisclosure } from '@chakra-ui/react';
-import { FC, PropsWithChildren, useEffect, useState } from 'react';
+import { Dispatch, FC, PropsWithChildren, SetStateAction, useEffect, useState } from 'react';
 import { CreateModal } from './CreateModal';
 import { useAccount } from '@useelven/core';
 
 interface NewSwapProps {
+    setError:Dispatch<SetStateAction<string>>
 }
 
 interface NftsArray {
@@ -12,7 +13,7 @@ interface NftsArray {
     fileType: string
 }
 
-export const NewSwap: FC<PropsWithChildren<NewSwapProps>> = ({ }) => {
+export const NewSwap: FC<PropsWithChildren<NewSwapProps>> = ({ setError }) => {
     const { isOpen, onClose, onOpen } = useDisclosure();
     const [nftsArray, setNftsArray] = useState<NftsArray[]>([])
     const [loading, setLoading] = useState<boolean>(true);

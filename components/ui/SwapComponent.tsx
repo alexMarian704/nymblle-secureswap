@@ -1,16 +1,17 @@
-import { Box } from '@chakra-ui/react';
+import { Box, Spinner } from '@chakra-ui/react';
 import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react';
 import { EGLDComponent } from './EGDLComponent';
 import { NFTComponent } from './NFTComponent';
 import { ApiNetworkProvider } from '@multiversx/sdk-network-providers/out';
-import { Address, AddressValue, ContractFunction, ResultsParser, SmartContract } from '@multiversx/sdk-core/out';
-import { useAccount } from '@useelven/core';
+import { Address, AddressValue, BooleanValue, ContractCallPayloadBuilder, ContractFunction, ResultsParser, SmartContract } from '@multiversx/sdk-core/out';
+import { useAccount, useNetwork, useTransaction } from '@useelven/core';
 
 interface SwapProps {
     setError: Dispatch<SetStateAction<string>>
 }
 
 export const Swap: FC<SwapProps> = ({ setError }) => {
+    const { pending, triggerTx, transaction, txResult, error } = useTransaction();
     const { address: userAddress } = useAccount();
     const [sender, setSender] = useState("");
     const [receiver, setReceiver] = useState("");
@@ -19,6 +20,9 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
     const [loading, setLoading] = useState(true);
     const [nftId, setNftID] = useState("")
     const [nftNonce, setNftNonce] = useState("")
+    const [provided, setProvided] = useState(true);
+    const [receiverHasVote, setReceiverHasVote] = useState(true);
+    const [senderHasVote, setSenderHasVote] = useState(true);
 
     const getUserType = async () => {
         const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
@@ -60,9 +64,42 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
         //console.log(hexToReadableString(decodeData.nft_id))
         setSender(bech32AddressSender);
         setReceiver(bech32AddressReceiver);
+        getApprove(bech32AddressReceiver, bech32AddressSender)
         setReceiverApprovement(decodeData.receiver_approvement);
         setSenderApprovement(decodeData.sender_approvement)
         setLoading(false)
+    }
+
+    const getApprove = async (receiverAddress: string, senderAddress: string) => {
+        const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
+        const contractAddress = new Address("erd1qqqqqqqqqqqqqpgqcvp6jd8c8skujd24x974xam203lzwstpn60qu5hx9q")
+        let contract = new SmartContract({ address: contractAddress })
+        let resultsParser = new ResultsParser()
+
+        //----------------------------------------------//
+        let queryReceiver = contract.createQuery({
+            func: new ContractFunction("getHasApproved"),
+            args: [new AddressValue(Address.fromBech32(receiverAddress))],
+            caller: new Address(userAddress)
+        });
+        let queryResponseReceiver = await apiProvider.queryContract(queryReceiver)
+        let bundleReceiver = resultsParser.parseUntypedQueryResponse(queryResponseReceiver);
+        //console.log(bundleReceiver.values[0].length)
+        if (bundleReceiver.values[0].length === 0) {
+            setReceiverHasVote(false);
+        }
+        //----------------------------------------------//
+        let querySender = contract.createQuery({
+            func: new ContractFunction("getHasApproved"),
+            args: [new AddressValue(Address.fromBech32(senderAddress))],
+            caller: new Address(userAddress)
+        });
+        let queryResponseSender = await apiProvider.queryContract(querySender)
+        let bundleSender = resultsParser.parseUntypedQueryResponse(queryResponseSender);
+        // console.log(bundleSender.values[0])
+        if (bundleSender.values[0].length === 0) {
+            setSenderHasVote(false);
+        }
     }
 
     const approveSwap = () => {
@@ -71,6 +108,27 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
 
     const claim = () => {
 
+    }
+
+    const sendEgld = () => {
+
+    }
+
+    const cancel = () => {
+        const contractAddress = 'erd1qqqqqqqqqqqqqpgqcvp6jd8c8skujd24x974xam203lzwstpn60qu5hx9q'
+        let func = new ContractFunction("approve")
+
+        const data = new ContractCallPayloadBuilder()
+            .setFunction(func)
+            .setArgs([new BooleanValue(false)])
+            .build();
+
+        triggerTx({
+            address: contractAddress,
+            gasLimit: 80000000,
+            value: 0,
+            data,
+        });
     }
 
     function decodeSwapData(uint8Array: any) {
@@ -173,7 +231,7 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
                         fontSize: "calc(22px + 0.1vw)",
                     }}></i></h2>
                     <div className='displayGrid'>
-                        {(userAddress === receiver && receiver !== "") ? <EGLDComponent userAddress={userAddress} receiver={receiver} /> : <NFTComponent nftId={`${nftId}-${nftNonce}`} />}
+                        {(userAddress === receiver && receiver !== "") ? <EGLDComponent userAddress={userAddress} receiver={receiver} provided={provided} setProvided={setProvided} /> : <NFTComponent nftId={`${nftId}-${nftNonce}`} />}
                     </div>
                 </div>}
                 {loading === false && <div className='inputContainer'>
@@ -182,7 +240,7 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
                         fontSize: "calc(22px + 0.1vw)",
                     }}></i></h2>
                     <div className='displayGrid'>
-                        {(userAddress === receiver && receiver !== "") ? <NFTComponent nftId={`${nftId}-${nftNonce}`} /> : <EGLDComponent userAddress={userAddress} receiver={receiver} />}
+                        {(userAddress === receiver && receiver !== "") ? <NFTComponent nftId={`${nftId}-${nftNonce}`} /> : <EGLDComponent userAddress={userAddress} receiver={receiver} provided={provided} setProvided={setProvided} />}
                     </div>
                 </div>}
             </div>
@@ -193,23 +251,55 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
                     fontSize: "calc(19px + 0.1vw)",
                     marginBottom: "8px"
                 }}>Swap has ended, please claim</h2>}
-                {((userAddress === sender && senderApprovement === false) || (userAddress === receiver && receiverApprovement === false)) && <button onClick={getUserType} className="deployModalButton" style={{
+                {((userAddress === sender && senderApprovement === false && senderHasVote === false) || (userAddress === receiver && receiverApprovement === false && receiverHasVote === false)) && <button onClick={cancel} className="deployModalButton" style={{
                     marginBottom: "6px"
                 }}><i className="bi bi-x-lg" style={{
                     color: "#ed2400",
                     fontSize: "calc(16px + 0.1vw)",
                     marginRight: "2px"
                 }}></i>Cancel</button>}
-                {((userAddress === sender && senderApprovement === false) || (userAddress === receiver && receiverApprovement === false)) && <button onClick={approveSwap} className="deployModalButton"><i className="bi bi-check-lg" style={{
+                {((userAddress === sender && senderApprovement === false && provided === true) || (userAddress === receiver && receiverApprovement === false && provided === true)) && <button onClick={approveSwap} className="deployModalButton"><i className="bi bi-check-lg" style={{
                     color: "#00e673",
                     fontSize: "calc(19px + 0.1vw)",
                     marginRight: "2px"
                 }}></i>Confirm swap</button>}
-                {((userAddress === sender && senderApprovement === true) && (userAddress === receiver && receiverApprovement === true)) && <button onClick={claim} className="deployModalButton"><i className="bi bi-check2-all" style={{
+                {((userAddress === sender && senderApprovement === false && provided === false && senderHasVote === false)) && <button className="deployModalButton"><i className="bi bi-person-fill" style={{
+                    color: "#00e673",
+                    fontSize: "calc(19px + 0.1vw)",
+                    marginRight: "2px"
+                }}></i>Waiting for receiver</button>}
+                {((userAddress === receiver && receiverApprovement === false && provided === false)) && <button onClick={sendEgld} className="deployModalButton"><i className="bi bi-check-lg" style={{
+                    color: "#00e673",
+                    fontSize: "calc(19px + 0.1vw)",
+                    marginRight: "2px"
+                }}></i>Send EGLD</button>}
+                {((senderApprovement === true && receiverApprovement === true) || (userAddress === sender && senderHasVote === true && senderApprovement === false) || (userAddress === receiver && receiverHasVote === true && receiverApprovement === false)) && <button onClick={claim} className="deployModalButton"><i className="bi bi-check2-all" style={{
                     color: "#00e673",
                     fontSize: "calc(19px + 0.1vw)",
                     marginRight: "2px"
                 }}></i>Claim</button>}
+                {((userAddress === sender && senderApprovement === true && receiverHasVote === false)) && <button className="deployModalButton"><i className="bi bi-person-fill" style={{
+                    color: "#00e673",
+                    fontSize: "calc(19px + 0.1vw)",
+                    marginRight: "2px"
+                }}></i>Waiting for receiver</button>}
+                {((senderApprovement === false && senderHasVote === false) && (userAddress === receiver && receiverApprovement === true)) && <button className="deployModalButton"><i className="bi bi-person-fill" style={{
+                    color: "#00e673",
+                    fontSize: "calc(19px + 0.1vw)",
+                    marginRight: "2px"
+                }}></i>Waiting for sender</button>}
+            </div>}
+            {pending === true && <div  className='loadingContainer'>
+                <Spinner
+                    speed='0.9s'
+                    width="130px"
+                    height="130px"
+                    thickness='13px'
+                    color='rgb(3,151,91)'
+                    marginBottom="10px"
+                />  
+                <p>Transaction loading....</p>
+                <p>Please wait</p>
             </div>}
         </Box>
     );

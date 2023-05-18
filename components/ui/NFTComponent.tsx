@@ -12,7 +12,6 @@ export const NFTComponent: FC<NFTComponentProps> = ({ nftId }) => {
         let cleanNftId = nftId.replace(/\f/g, '');
         const response = await fetch(`https://devnet-api.multiversx.com/nfts/${cleanNftId.trim()}`)
         const data = await response.json();
-        console.log(data);
         setNftUrl(data.url);
     }
 

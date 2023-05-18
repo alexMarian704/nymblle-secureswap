@@ -1,16 +1,17 @@
 import { Box } from '@chakra-ui/react';
-import { FC, useEffect, useState } from 'react';
+import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react';
 import { Address, AddressValue, ContractFunction, ResultsParser, SmartContract } from '@multiversx/sdk-core/out';
 import { ApiNetworkProvider } from '@multiversx/sdk-network-providers/out';
 
 interface EGLDComponentProps {
     userAddress: string;
     receiver: string;
+    provided:boolean;
+    setProvided:Dispatch<SetStateAction<boolean>>
 }
 
-export const EGLDComponent: FC<EGLDComponentProps> = ({ userAddress, receiver }) => {
+export const EGLDComponent: FC<EGLDComponentProps> = ({ userAddress, receiver, provided, setProvided }) => {
     const [egldValue, setEgldValue] = useState("");
-    const [provided, setProvided] = useState(true);
 
     useEffect(() => {
         if (egldValue[0] !== ".") {

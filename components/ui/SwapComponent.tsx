@@ -23,6 +23,7 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
     const [provided, setProvided] = useState(true);
     const [receiverHasVote, setReceiverHasVote] = useState(true);
     const [senderHasVote, setSenderHasVote] = useState(true);
+    const [egldValue, setEgldValue] = useState("");
 
     const getUserType = async () => {
         const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
@@ -103,15 +104,58 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
     }
 
     const approveSwap = () => {
+        const contractAddress = 'erd1qqqqqqqqqqqqqpgqcvp6jd8c8skujd24x974xam203lzwstpn60qu5hx9q'
+        let func = new ContractFunction("approve")
 
+        const data = new ContractCallPayloadBuilder()
+            .setFunction(func)
+            .setArgs([new BooleanValue(true)])
+            .build();
+
+        triggerTx({
+            address: contractAddress,
+            gasLimit: 80000000,
+            value: 0,
+            data,
+        });
     }
 
     const claim = () => {
+        const contractAddress = 'erd1qqqqqqqqqqqqqpgqcvp6jd8c8skujd24x974xam203lzwstpn60qu5hx9q'
+        let func = new ContractFunction("claim")
 
+        const data = new ContractCallPayloadBuilder()
+            .setFunction(func)
+            .setArgs([])
+            .build();
+
+        triggerTx({
+            address: contractAddress,
+            gasLimit: 80000000,
+            value: 0,
+            data,
+        });
     }
 
     const sendEgld = () => {
+        const contractAddress = 'erd1qqqqqqqqqqqqqpgqcvp6jd8c8skujd24x974xam203lzwstpn60qu5hx9q'
+        let func = new ContractFunction("provide_tokens")
 
+        const data = new ContractCallPayloadBuilder()
+            .setFunction(func)
+            .setArgs([])
+            .build();
+
+        if (Number(egldValue) > 0) {
+            triggerTx({
+                address: contractAddress,
+                gasLimit: 80000000,
+                value: Number(egldValue),
+                data,
+            });
+        } else {
+            setError("Amount needs to be higher than 0")
+        }
     }
 
     const cancel = () => {
@@ -231,7 +275,7 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
                         fontSize: "calc(22px + 0.1vw)",
                     }}></i></h2>
                     <div className='displayGrid'>
-                        {(userAddress === receiver && receiver !== "") ? <EGLDComponent userAddress={userAddress} receiver={receiver} provided={provided} setProvided={setProvided} /> : <NFTComponent nftId={`${nftId}-${nftNonce}`} />}
+                        {(userAddress === receiver && receiver !== "") ? <EGLDComponent userAddress={userAddress} receiver={receiver} provided={provided} setProvided={setProvided} egldValue={egldValue} setEgldValue={setEgldValue} /> : <NFTComponent nftId={`${nftId}-${nftNonce}`} />}
                     </div>
                 </div>}
                 {loading === false && <div className='inputContainer'>
@@ -240,7 +284,7 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
                         fontSize: "calc(22px + 0.1vw)",
                     }}></i></h2>
                     <div className='displayGrid'>
-                        {(userAddress === receiver && receiver !== "") ? <NFTComponent nftId={`${nftId}-${nftNonce}`} /> : <EGLDComponent userAddress={userAddress} receiver={receiver} provided={provided} setProvided={setProvided} />}
+                        {(userAddress === receiver && receiver !== "") ? <NFTComponent nftId={`${nftId}-${nftNonce}`} /> : <EGLDComponent userAddress={userAddress} receiver={receiver} provided={provided} setProvided={setProvided} egldValue={egldValue} setEgldValue={setEgldValue} />}
                     </div>
                 </div>}
             </div>
@@ -289,7 +333,7 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
                     marginRight: "2px"
                 }}></i>Waiting for sender</button>}
             </div>}
-            {pending === true && <div  className='loadingContainer'>
+            {pending === true && <div className='loadingContainer'>
                 <Spinner
                     speed='0.9s'
                     width="130px"
@@ -297,7 +341,7 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
                     thickness='13px'
                     color='rgb(3,151,91)'
                     marginBottom="10px"
-                />  
+                />
                 <p>Transaction loading....</p>
                 <p>Please wait</p>
             </div>}

@@ -6,12 +6,13 @@ import { ApiNetworkProvider } from '@multiversx/sdk-network-providers/out';
 interface EGLDComponentProps {
     userAddress: string;
     receiver: string;
-    provided:boolean;
-    setProvided:Dispatch<SetStateAction<boolean>>
+    provided: boolean;
+    egldValue: string;
+    setEgldValue: Dispatch<SetStateAction<string>>
+    setProvided: Dispatch<SetStateAction<boolean>>
 }
 
-export const EGLDComponent: FC<EGLDComponentProps> = ({ userAddress, receiver, provided, setProvided }) => {
-    const [egldValue, setEgldValue] = useState("");
+export const EGLDComponent: FC<EGLDComponentProps> = ({ userAddress, receiver, provided, setProvided, egldValue, setEgldValue }) => {
 
     useEffect(() => {
         if (egldValue[0] !== ".") {
@@ -48,7 +49,7 @@ export const EGLDComponent: FC<EGLDComponentProps> = ({ userAddress, receiver, p
         const parsedValue = parseInt(bundle.values[0].toString('hex'), 16);
         if (isNaN(parsedValue)) {
             setProvided(false);
-        }else{
+        } else {
             setEgldValue(String(parseInt))
         }
     }
@@ -66,13 +67,13 @@ export const EGLDComponent: FC<EGLDComponentProps> = ({ userAddress, receiver, p
                 textAlign: "center",
                 color: "rgb(210,210,210)"
             }}>Not provided</h3>}
-             {provided === true && <h3 style={{
+            {provided === true && <h3 style={{
                 textAlign: "center",
                 color: "rgb(220,220,220)",
-                display:"grid",
-                placeContent:"center",
-                padding:"10px",
-                fontSize:"calc(26px + 0.1vw)"
+                display: "grid",
+                placeContent: "center",
+                padding: "10px",
+                fontSize: "calc(26px + 0.1vw)"
             }}>{egldValue}</h3>}
         </div>
     );

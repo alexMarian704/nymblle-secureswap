@@ -4,7 +4,7 @@ import { CreateModal } from './CreateModal';
 import { useAccount } from '@useelven/core';
 
 interface NewSwapProps {
-    setError:Dispatch<SetStateAction<string>>
+    setError?:Dispatch<SetStateAction<string>>
 }
 
 interface NftsArray {
@@ -13,7 +13,7 @@ interface NftsArray {
     fileType: string
 }
 
-export const NewSwap: FC<PropsWithChildren<NewSwapProps>> = ({ setError }) => {
+export const NewSwap: FC<PropsWithChildren<NewSwapProps>> = ({ }) => {
     const { isOpen, onClose, onOpen } = useDisclosure();
     const [nftsArray, setNftsArray] = useState<NftsArray[]>([])
     const [loading, setLoading] = useState<boolean>(true);
@@ -23,7 +23,7 @@ export const NewSwap: FC<PropsWithChildren<NewSwapProps>> = ({ setError }) => {
         const response = await fetch(`https://devnet-api.multiversx.com/accounts/${address}/nfts`)
         const data = await response.json();
 
-        let nftsArray = [];
+        const nftsArray = [];
         for (let dataIndex = 0; dataIndex < data.length; dataIndex++) {
             const dataObject = data[dataIndex];
             if (dataObject.type === "NonFungibleESDT") {

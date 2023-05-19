@@ -25,20 +25,20 @@ const Home: NextPage = () => {
     const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
 
     const contractAddress = new Address("erd1qqqqqqqqqqqqqpgqcvp6jd8c8skujd24x974xam203lzwstpn60qu5hx9q")
-    let contract = new SmartContract({ address: contractAddress })
+    const contract = new SmartContract({ address: contractAddress })
 
     const address = Address.fromBech32(userAddress);
 
-    let query = contract.createQuery({
+    const query = contract.createQuery({
       func: new ContractFunction("getIsUser"),
       args: [new AddressValue(address)],
       caller: new Address(userAddress)
     });
 
-    let resultsParser = new ResultsParser()
+    const resultsParser = new ResultsParser()
 
-    let queryResponse = await apiProvider.queryContract(query)
-    let bundle = resultsParser.parseUntypedQueryResponse(queryResponse);
+    const queryResponse = await apiProvider.queryContract(query)
+    const bundle = resultsParser.parseUntypedQueryResponse(queryResponse);
 
     if(bundle.values[0].toString('hex') === "01"){
       setIsUser(1);
@@ -52,16 +52,6 @@ const Home: NextPage = () => {
       getContractData();
     }
   },[userAddress])
-
-  function hexToString(hex: String) {
-    let str = '';
-    for (let i = 0; i < hex.length; i += 2) {
-      const hexChar = hex.substr(i, 2);
-      const charCode = parseInt(hexChar, 16);
-      str += String.fromCharCode(charCode);
-    }
-    return str;
-  }
 
   return (
     <MainLayout>

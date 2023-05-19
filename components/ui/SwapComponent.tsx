@@ -11,7 +11,7 @@ interface SwapProps {
 }
 
 export const Swap: FC<SwapProps> = ({ setError }) => {
-    const { pending, triggerTx, transaction, txResult, error } = useTransaction();
+    const { pending, triggerTx } = useTransaction();
     const { address: userAddress } = useAccount();
     const [sender, setSender] = useState("");
     const [receiver, setReceiver] = useState("");
@@ -31,16 +31,16 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
         const contractAddress = new Address("erd1qqqqqqqqqqqqqpgqcvp6jd8c8skujd24x974xam203lzwstpn60qu5hx9q")
         let contract = new SmartContract({ address: contractAddress })
 
-        let query = contract.createQuery({
+        const query = contract.createQuery({
             func: new ContractFunction("getSwap"),
             args: [new AddressValue(Address.fromBech32(userAddress))],
             caller: new Address(userAddress)
         });
 
-        let resultsParser = new ResultsParser()
+        const resultsParser = new ResultsParser()
 
-        let queryResponse = await apiProvider.queryContract(query)
-        let bundle = resultsParser.parseUntypedQueryResponse(queryResponse);
+        const queryResponse = await apiProvider.queryContract(query)
+        const bundle = resultsParser.parseUntypedQueryResponse(queryResponse);
 
         const decodeData = decodeSwapData(bundle.values[0]);
         //console.log(decodeSwapData(bundle.values[0]));
@@ -49,15 +49,15 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
         const bech32AddressReceiver = Address.fromHex(decodeData.receiver).bech32();
 
 
-        let queryNounce = contract.createQuery({
+        const queryNounce = contract.createQuery({
             func: new ContractFunction("getNftNonce"),
             args: [new AddressValue(Address.fromBech32(bech32AddressSender))],
             caller: new Address(userAddress)
         });
 
-        let resultsParserNounce = new ResultsParser()
-        let queryResponseNounce = await apiProvider.queryContract(queryNounce)
-        let bundleNounce = resultsParserNounce.parseUntypedQueryResponse(queryResponseNounce);
+        const resultsParserNounce = new ResultsParser()
+        const queryResponseNounce = await apiProvider.queryContract(queryNounce)
+        const bundleNounce = resultsParserNounce.parseUntypedQueryResponse(queryResponseNounce);
         setNftNonce(bundleNounce.values[0].toString("hex"))
 
 
@@ -74,29 +74,29 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
     const getApprove = async (receiverAddress: string, senderAddress: string) => {
         const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
         const contractAddress = new Address("erd1qqqqqqqqqqqqqpgqcvp6jd8c8skujd24x974xam203lzwstpn60qu5hx9q")
-        let contract = new SmartContract({ address: contractAddress })
-        let resultsParser = new ResultsParser()
+        const contract = new SmartContract({ address: contractAddress })
+        const resultsParser = new ResultsParser()
 
         //----------------------------------------------//
-        let queryReceiver = contract.createQuery({
+        const queryReceiver = contract.createQuery({
             func: new ContractFunction("getHasApproved"),
             args: [new AddressValue(Address.fromBech32(receiverAddress))],
             caller: new Address(userAddress)
         });
-        let queryResponseReceiver = await apiProvider.queryContract(queryReceiver)
-        let bundleReceiver = resultsParser.parseUntypedQueryResponse(queryResponseReceiver);
+        const queryResponseReceiver = await apiProvider.queryContract(queryReceiver)
+        const bundleReceiver = resultsParser.parseUntypedQueryResponse(queryResponseReceiver);
         //console.log(bundleReceiver.values[0].length)
         if (bundleReceiver.values[0].length === 0) {
             setReceiverHasVote(false);
         }
         //----------------------------------------------//
-        let querySender = contract.createQuery({
+        const querySender = contract.createQuery({
             func: new ContractFunction("getHasApproved"),
             args: [new AddressValue(Address.fromBech32(senderAddress))],
             caller: new Address(userAddress)
         });
-        let queryResponseSender = await apiProvider.queryContract(querySender)
-        let bundleSender = resultsParser.parseUntypedQueryResponse(queryResponseSender);
+        const queryResponseSender = await apiProvider.queryContract(querySender)
+        const bundleSender = resultsParser.parseUntypedQueryResponse(queryResponseSender);
         // console.log(bundleSender.values[0])
         if (bundleSender.values[0].length === 0) {
             setSenderHasVote(false);
@@ -241,11 +241,11 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
     }
 
 
-    const getNFTs = async () => {
-        const response = await fetch("https://devnet-api.multiversx.com/accounts/erd1lpg4rqgeshusq0n73zzflwkzs0f6mxr6kt3ttx2v7mqktcxyn60qghnw70/nfts")
-        const data = await response.json();
-        console.log(data);
-    }
+    // const getNFTs = async () => {
+    //     const response = await fetch("https://devnet-api.multiversx.com/accounts/erd1lpg4rqgeshusq0n73zzflwkzs0f6mxr6kt3ttx2v7mqktcxyn60qghnw70/nfts")
+    //     const data = await response.json();
+    //     console.log(data);
+    // }
 
     useEffect(() => {
         getUserType()

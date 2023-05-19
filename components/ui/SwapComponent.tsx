@@ -232,7 +232,7 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
     function hexToReadableString(hex: string) {
         let result = '';
         for (let i = 0; i < hex.length; i += 2) {
-            let charCode = parseInt(hex.substr(i, 2), 16);
+            const charCode = parseInt(hex.substr(i, 2), 16);
             if (charCode > 0) {
                 result += String.fromCharCode(charCode);
             }

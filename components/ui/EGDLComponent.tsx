@@ -32,18 +32,18 @@ export const EGLDComponent: FC<EGLDComponentProps> = ({ userAddress, receiver, p
         const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
 
         const contractAddress = new Address("erd1qqqqqqqqqqqqqpgqcvp6jd8c8skujd24x974xam203lzwstpn60qu5hx9q")
-        let contract = new SmartContract({ address: contractAddress })
+        const contract = new SmartContract({ address: contractAddress })
 
-        let query = contract.createQuery({
+        const query = contract.createQuery({
             func: new ContractFunction("getAmount"),
             args: [new AddressValue(Address.fromBech32(receiver))],
             caller: new Address(userAddress)
         });
 
-        let resultsParser = new ResultsParser()
+        const resultsParser = new ResultsParser()
 
-        let queryResponse = await apiProvider.queryContract(query)
-        let bundle = resultsParser.parseUntypedQueryResponse(queryResponse);
+        const queryResponse = await apiProvider.queryContract(query)
+        const bundle = resultsParser.parseUntypedQueryResponse(queryResponse);
 
         const parsedValue = parseInt(bundle.values[0].toString('hex'), 16);
         if (isNaN(parsedValue)) {

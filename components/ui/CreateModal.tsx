@@ -36,7 +36,7 @@ export const CreateModal: FC<CreateModalProps> = ({ isOpen, onClose, nftsArray, 
     const sendNft = useCallback(async () => {
         const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
 
-        let func = new ContractFunction("ESDTNFTTransfer")
+        const func = new ContractFunction("ESDTNFTTransfer")
         const s = new AddressValue(new Address('erd1lpg4rqgeshusq0n73zzflwkzs0f6mxr6kt3ttx2v7mqktcxyn60qghnw70'))
         const contractAddress = 'erd1qqqqqqqqqqqqqpgqcvp6jd8c8skujd24x974xam203lzwstpn60qu5hx9q'
         const address = Address.fromBech32(contractAddress);

@@ -1,4 +1,3 @@
-import { Box } from '@chakra-ui/react';
 import { Dispatch, FC, SetStateAction, useEffect, useState } from 'react';
 import { Address, AddressValue, ContractFunction, ResultsParser, SmartContract } from '@multiversx/sdk-core/out';
 import { ApiNetworkProvider } from '@multiversx/sdk-network-providers/out';

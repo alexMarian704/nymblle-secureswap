@@ -4,7 +4,7 @@ import { EGLDComponent } from './EGDLComponent';
 import { NFTComponent } from './NFTComponent';
 import { ApiNetworkProvider } from '@multiversx/sdk-network-providers/out';
 import { Address, AddressValue, BooleanValue, ContractCallPayloadBuilder, ContractFunction, ResultsParser, SmartContract } from '@multiversx/sdk-core/out';
-import { useAccount, useNetwork, useTransaction } from '@useelven/core';
+import { useAccount, useTransaction } from '@useelven/core';
 
 interface SwapProps {
     setError: Dispatch<SetStateAction<string>>

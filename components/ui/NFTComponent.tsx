@@ -1,4 +1,3 @@
-import { Box } from '@chakra-ui/react';
 import { FC, useEffect, useState } from 'react';
 
 interface NFTComponentProps {

@@ -1,7 +1,7 @@
 import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Spinner, Text } from '@chakra-ui/react';
-import { Address, AddressValue, BigUIntValue, BytesValue, ContractCallPayloadBuilder, ContractFunction, TokenIdentifierValue, Transaction, TypedValue, U64Value } from '@multiversx/sdk-core/out';
+import { Address, AddressValue, BigUIntValue, BytesValue, ContractCallPayloadBuilder, ContractFunction, TokenIdentifierValue, U64Value } from '@multiversx/sdk-core/out';
 import { ApiNetworkProvider } from '@multiversx/sdk-network-providers/out';
-import { useAccount, useNetwork, useTransaction } from '@useelven/core';
+import { useAccount,  useTransaction } from '@useelven/core';
 import { FC, useCallback, useEffect, useState } from 'react';
 
 interface CreateModalProps {

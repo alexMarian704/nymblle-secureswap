@@ -29,7 +29,7 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
         const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
 
         const contractAddress = new Address("erd1qqqqqqqqqqqqqpgqcvp6jd8c8skujd24x974xam203lzwstpn60qu5hx9q")
-        let contract = new SmartContract({ address: contractAddress })
+        const contract = new SmartContract({ address: contractAddress })
 
         const query = contract.createQuery({
             func: new ContractFunction("getSwap"),
@@ -105,7 +105,7 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
 
     const approveSwap = () => {
         const contractAddress = 'erd1qqqqqqqqqqqqqpgqcvp6jd8c8skujd24x974xam203lzwstpn60qu5hx9q'
-        let func = new ContractFunction("approve")
+        const func = new ContractFunction("approve")
 
         const data = new ContractCallPayloadBuilder()
             .setFunction(func)
@@ -122,7 +122,7 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
 
     const claim = () => {
         const contractAddress = 'erd1qqqqqqqqqqqqqpgqcvp6jd8c8skujd24x974xam203lzwstpn60qu5hx9q'
-        let func = new ContractFunction("claim")
+        const func = new ContractFunction("claim")
 
         const data = new ContractCallPayloadBuilder()
             .setFunction(func)
@@ -139,7 +139,7 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
 
     const sendEgld = () => {
         const contractAddress = 'erd1qqqqqqqqqqqqqpgqcvp6jd8c8skujd24x974xam203lzwstpn60qu5hx9q'
-        let func = new ContractFunction("provide_tokens")
+        const func = new ContractFunction("provide_tokens")
 
         const data = new ContractCallPayloadBuilder()
             .setFunction(func)
@@ -160,7 +160,7 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
 
     const cancel = () => {
         const contractAddress = 'erd1qqqqqqqqqqqqqpgqcvp6jd8c8skujd24x974xam203lzwstpn60qu5hx9q'
-        let func = new ContractFunction("approve")
+        const func = new ContractFunction("approve")
 
         const data = new ContractCallPayloadBuilder()
             .setFunction(func)

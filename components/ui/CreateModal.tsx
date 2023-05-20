@@ -37,16 +37,14 @@ export const CreateModal: FC<CreateModalProps> = ({ isOpen, onClose, nftsArray, 
         const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
 
         const func = new ContractFunction("ESDTNFTTransfer")
-        const s = new AddressValue(new Address('erd1lpg4rqgeshusq0n73zzflwkzs0f6mxr6kt3ttx2v7mqktcxyn60qghnw70'))
+       // const s = new AddressValue(new Address('erd1lpg4rqgeshusq0n73zzflwkzs0f6mxr6kt3ttx2v7mqktcxyn60qghnw70'))
         const contractAddress = 'erd1qqqqqqqqqqqqqpgqcvp6jd8c8skujd24x974xam203lzwstpn60qu5hx9q'
-        const address = Address.fromBech32(contractAddress);
+        const addressContractBech32 = Address.fromBech32(contractAddress);
 
         const data = new ContractCallPayloadBuilder()
             .setFunction(func)
-            .setArgs([BytesValue.fromUTF8(nftCollection), new U64Value(nftNonce), new BigUIntValue(1), new AddressValue(address), BytesValue.fromUTF8("initiate_swap"), new TokenIdentifierValue(nftCollection), new U64Value(nftNonce), new AddressValue(new Address(address))])
+            .setArgs([BytesValue.fromUTF8(nftCollection), new U64Value(nftNonce), new BigUIntValue(1), new AddressValue(addressContractBech32), BytesValue.fromUTF8("initiate_swap"), new TokenIdentifierValue(nftCollection), new U64Value(nftNonce), new AddressValue(new Address(address))])
             .build();
-
-        console.log(userAddress)
 
         triggerTx({
             address: userAddress,

@@ -322,7 +322,7 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
                 </div>}
             </div>
             {loading === false && <div className='buttonsContainer'>
-                {((userAddress === sender && senderApprovement === true) && (userAddress === receiver && receiverApprovement === true)) && <h2 style={{
+                {((senderApprovement === true && receiverApprovement === true)) && <h2 style={{
                     width: "100%",
                     textAlign: "center",
                     fontSize: "calc(19px + 0.1vw)",

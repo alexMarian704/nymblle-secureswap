@@ -49,7 +49,7 @@ export const EGLDComponent: FC<EGLDComponentProps> = ({ userAddress, receiver, p
         if (isNaN(parsedValue)) {
             setProvided(false);
         } else {
-            setEgldValue(String(parseInt))
+            setEgldValue(String(parsedValue))
         }
     }
 

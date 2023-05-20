@@ -21,8 +21,8 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
     const [nftId, setNftID] = useState("")
     const [nftNonce, setNftNonce] = useState("")
     const [provided, setProvided] = useState(true);
-    const [receiverHasVote, setReceiverHasVote] = useState(true);
-    const [senderHasVote, setSenderHasVote] = useState(true);
+    const [receiverHasVote, setReceiverHasVote] = useState(false);
+    const [senderHasVote, setSenderHasVote] = useState(false);
     const [egldValue, setEgldValue] = useState("");
 
     const getUserType = async () => {
@@ -60,15 +60,48 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
         const bundleNounce = resultsParserNounce.parseUntypedQueryResponse(queryResponseNounce);
         setNftNonce(bundleNounce.values[0].toString("hex"))
 
+        //console.log(decodeData)
+
 
         setNftID(hexToReadableString(decodeData.nft_id))
         //console.log(hexToReadableString(decodeData.nft_id))
         setSender(bech32AddressSender);
         setReceiver(bech32AddressReceiver);
         getApprove(bech32AddressReceiver, bech32AddressSender)
-        setReceiverApprovement(decodeData.receiver_approvement);
-        setSenderApprovement(decodeData.sender_approvement)
+        getVote(bech32AddressReceiver, bech32AddressSender)
+        // setReceiverApprovement(decodeData.receiver_approvement);
+        // setSenderApprovement(decodeData.sender_approvement)
         setLoading(false)
+    }
+
+    const getVote = async (receiverAddress: string, senderAddress: string) => {
+        const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
+        const contractAddress = new Address("erd1qqqqqqqqqqqqqpgqcvp6jd8c8skujd24x974xam203lzwstpn60qu5hx9q")
+        const contract = new SmartContract({ address: contractAddress })
+        const resultsParser = new ResultsParser()
+
+        //----------------------------------------------//
+        const queryReceiver = contract.createQuery({
+            func: new ContractFunction("getReceiverApprovement"),
+            args: [new AddressValue(Address.fromBech32(receiverAddress))],
+            caller: new Address(userAddress)
+        });
+        const queryResponseReceiver = await apiProvider.queryContract(queryReceiver)
+        const bundleReceiver = resultsParser.parseUntypedQueryResponse(queryResponseReceiver);
+        if (bundleReceiver.values[0].toString("hex") === "01") {
+            setReceiverApprovement(true);
+        }
+        //----------------------------------------------//
+        const querySender = contract.createQuery({
+            func: new ContractFunction("getSenderApprovement"),
+            args: [new AddressValue(Address.fromBech32(senderAddress))],
+            caller: new Address(userAddress)
+        });
+        const queryResponseSender = await apiProvider.queryContract(querySender)
+        const bundleSender = resultsParser.parseUntypedQueryResponse(queryResponseSender);
+        if (bundleSender.values[0].toString("hex") === "01") {
+            setSenderApprovement(true);
+        }
     }
 
     const getApprove = async (receiverAddress: string, senderAddress: string) => {
@@ -85,9 +118,8 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
         });
         const queryResponseReceiver = await apiProvider.queryContract(queryReceiver)
         const bundleReceiver = resultsParser.parseUntypedQueryResponse(queryResponseReceiver);
-        //console.log(bundleReceiver.values[0].length)
-        if (bundleReceiver.values[0].length === 0) {
-            setReceiverHasVote(false);
+        if (bundleReceiver.values[0].toString("hex") === "01") {
+            setReceiverHasVote(true);
         }
         //----------------------------------------------//
         const querySender = contract.createQuery({
@@ -97,9 +129,8 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
         });
         const queryResponseSender = await apiProvider.queryContract(querySender)
         const bundleSender = resultsParser.parseUntypedQueryResponse(queryResponseSender);
-        // console.log(bundleSender.values[0])
-        if (bundleSender.values[0].length === 0) {
-            setSenderHasVote(false);
+        if (bundleSender.values[0].toString("hex") === "01") {
+            setSenderHasVote(true);
         }
     }
 
@@ -150,7 +181,7 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
             triggerTx({
                 address: contractAddress,
                 gasLimit: 80000000,
-                value: Number(egldValue),
+                value: Number(egldValue) * (10 ** 18),
                 data,
             });
         } else {
@@ -247,6 +278,8 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
     //     console.log(data);
     // }
 
+    //console.log(receiverApprovement, receiverHasVote)
+
     useEffect(() => {
         getUserType()
     }, [])
@@ -302,7 +335,7 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
                     fontSize: "calc(16px + 0.1vw)",
                     marginRight: "2px"
                 }}></i>Cancel</button>}
-                {((userAddress === sender && senderApprovement === false && provided === true) || (userAddress === receiver && receiverApprovement === false && provided === true)) && <button onClick={approveSwap} className="deployModalButton"><i className="bi bi-check-lg" style={{
+                {((userAddress === sender && senderApprovement === false && provided === true && senderHasVote === false) || (userAddress === receiver && receiverApprovement === false && provided === true && receiverHasVote === false)) && <button onClick={approveSwap} className="deployModalButton"><i className="bi bi-check-lg" style={{
                     color: "#00e673",
                     fontSize: "calc(19px + 0.1vw)",
                     marginRight: "2px"

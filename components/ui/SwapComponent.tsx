@@ -354,7 +354,7 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
                     color: "#00e673",
                     fontSize: "calc(19px + 0.1vw)",
                     marginRight: "2px"
-                }}></i>Claim</button>}
+                }}></i>Claim your {((userAddress === sender && senderHasVote === true && senderApprovement === false) || (userAddress === receiver && receiverHasVote === true && receiverApprovement === true)) ? "NFT" : "EGLD" }</button>}
                 {((userAddress === sender && senderApprovement === true && receiverHasVote === false)) && <button className="deployModalButton"><i className="bi bi-person-fill" style={{
                     color: "#00e673",
                     fontSize: "calc(19px + 0.1vw)",

@@ -4,16 +4,18 @@ import { CreateModal } from './CreateModal';
 import { useAccount } from '@useelven/core';
 
 interface NewSwapProps {
-    setError?:Dispatch<SetStateAction<string>>
+    setError?: Dispatch<SetStateAction<string>>
+    setRefreshData: Dispatch<SetStateAction<boolean>>;
+    refreshData: boolean;
 }
 
 interface NftsArray {
     identifier: string
     url: string
-    fileType: string
+    fileType: string;
 }
 
-export const NewSwap: FC<PropsWithChildren<NewSwapProps>> = ({ }) => {
+export const NewSwap: FC<PropsWithChildren<NewSwapProps>> = ({ setRefreshData, refreshData }) => {
     const { isOpen, onClose, onOpen } = useDisclosure();
     const [nftsArray, setNftsArray] = useState<NftsArray[]>([])
     const [loading, setLoading] = useState<boolean>(true);
@@ -46,9 +48,9 @@ export const NewSwap: FC<PropsWithChildren<NewSwapProps>> = ({ }) => {
         return !!pattern.test(str);
     }
 
-    useEffect(()=>{
+    useEffect(() => {
         getNFTs();
-    },[])
+    }, [])
 
     return (
         <Box
@@ -67,11 +69,11 @@ export const NewSwap: FC<PropsWithChildren<NewSwapProps>> = ({ }) => {
         >
             <Flex flexDirection="column" alignItems="center" justifyContent="center" height="100%">
                 <button style={{
-                    borderRadius:"50vh",
-                    height:"calc(80px + 0.6vw)",
-                    display:"grid",
-                    placeContent:"center",
-                    outline:"none"
+                    borderRadius: "50vh",
+                    height: "calc(80px + 0.6vw)",
+                    display: "grid",
+                    placeContent: "center",
+                    outline: "none"
                 }} onClick={onOpen}>
                     <i className="bi bi-plus-circle icon-hover"
                         style={{
@@ -80,7 +82,7 @@ export const NewSwap: FC<PropsWithChildren<NewSwapProps>> = ({ }) => {
                     ></i>
                 </button>
             </Flex>
-            <CreateModal isOpen={isOpen} onClose={onClose} nftsArray={nftsArray} loading={loading} />
+            <CreateModal isOpen={isOpen} onClose={onClose} nftsArray={nftsArray} loading={loading} setRefreshData={setRefreshData} refreshData={refreshData} />
         </Box>
     );
 };

@@ -7,11 +7,13 @@ import { Address, AddressValue, BooleanValue, ContractCallPayloadBuilder, Contra
 import { useAccount, useTransaction } from '@useelven/core';
 
 interface SwapProps {
-    setError: Dispatch<SetStateAction<string>>
+    setError: Dispatch<SetStateAction<string>>;
+    setRefreshData: Dispatch<SetStateAction<boolean>>;
+    refreshData: boolean;
 }
 
-export const Swap: FC<SwapProps> = ({ setError }) => {
-    const { pending, triggerTx } = useTransaction();
+export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData }) => {
+    const { pending, triggerTx, transaction } = useTransaction();
     const { address: userAddress } = useAccount();
     const [sender, setSender] = useState("");
     const [receiver, setReceiver] = useState("");
@@ -43,7 +45,6 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
         const bundle = resultsParser.parseUntypedQueryResponse(queryResponse);
 
         const decodeData = decodeSwapData(bundle.values[0]);
-        //console.log(decodeSwapData(bundle.values[0]));
 
         const bech32AddressSender = Address.fromHex(decodeData.sender).bech32();
         const bech32AddressReceiver = Address.fromHex(decodeData.receiver).bech32();
@@ -58,13 +59,9 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
         const resultsParserNounce = new ResultsParser()
         const queryResponseNounce = await apiProvider.queryContract(queryNounce)
         const bundleNounce = resultsParserNounce.parseUntypedQueryResponse(queryResponseNounce);
+
         setNftNonce(bundleNounce.values[0].toString("hex"))
-
-        //console.log(decodeData)
-
-
         setNftID(hexToReadableString(decodeData.nft_id))
-        //console.log(hexToReadableString(decodeData.nft_id))
         setSender(bech32AddressSender);
         setReceiver(bech32AddressReceiver);
         getApprove(bech32AddressReceiver, bech32AddressSender)
@@ -90,6 +87,8 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
         const bundleReceiver = resultsParser.parseUntypedQueryResponse(queryResponseReceiver);
         if (bundleReceiver.values[0].toString("hex") === "01") {
             setReceiverApprovement(true);
+        }else{
+            setReceiverApprovement(false)
         }
         //----------------------------------------------//
         const querySender = contract.createQuery({
@@ -101,6 +100,8 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
         const bundleSender = resultsParser.parseUntypedQueryResponse(queryResponseSender);
         if (bundleSender.values[0].toString("hex") === "01") {
             setSenderApprovement(true);
+        }else{
+            setSenderApprovement(false);
         }
     }
 
@@ -120,6 +121,8 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
         const bundleReceiver = resultsParser.parseUntypedQueryResponse(queryResponseReceiver);
         if (bundleReceiver.values[0].toString("hex") === "01") {
             setReceiverHasVote(true);
+        }else{
+            setReceiverHasVote(false)
         }
         //----------------------------------------------//
         const querySender = contract.createQuery({
@@ -131,6 +134,8 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
         const bundleSender = resultsParser.parseUntypedQueryResponse(queryResponseSender);
         if (bundleSender.values[0].toString("hex") === "01") {
             setSenderHasVote(true);
+        }else{
+            setSenderHasVote(false);
         }
     }
 
@@ -271,14 +276,17 @@ export const Swap: FC<SwapProps> = ({ setError }) => {
         return result;
     }
 
-
     // const getNFTs = async () => {
     //     const response = await fetch("https://devnet-api.multiversx.com/accounts/erd1lpg4rqgeshusq0n73zzflwkzs0f6mxr6kt3ttx2v7mqktcxyn60qghnw70/nfts")
     //     const data = await response.json();
     //     console.log(data);
     // }
 
-    //console.log(receiverApprovement, receiverHasVote)
+    useEffect(()=>{
+        if(transaction !== null){
+            setRefreshData(!refreshData)
+        }
+    },[transaction])
 
     useEffect(() => {
         getUserType()

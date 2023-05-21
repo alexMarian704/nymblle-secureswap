@@ -1,14 +1,16 @@
 import { Modal, ModalBody, ModalCloseButton, ModalContent, ModalFooter, ModalHeader, ModalOverlay, Spinner, Text } from '@chakra-ui/react';
 import { Address, AddressValue, BigUIntValue, BytesValue, ContractCallPayloadBuilder, ContractFunction, TokenIdentifierValue, U64Value } from '@multiversx/sdk-core/out';
 import { ApiNetworkProvider } from '@multiversx/sdk-network-providers/out';
-import { useAccount,  useTransaction } from '@useelven/core';
-import { FC, useCallback, useEffect, useState } from 'react';
+import { useAccount, useTransaction } from '@useelven/core';
+import { Dispatch, FC, SetStateAction, useCallback, useEffect, useState } from 'react';
 
 interface CreateModalProps {
     onClose?: () => void;
     isOpen: boolean;
     nftsArray: NftsArray[]
-    loading: boolean
+    loading: boolean;
+    setRefreshData: Dispatch<SetStateAction<boolean>>;
+    refreshData: boolean;
 }
 
 interface NftsArray {
@@ -17,7 +19,7 @@ interface NftsArray {
     fileType: string
 }
 
-export const CreateModal: FC<CreateModalProps> = ({ isOpen, onClose, nftsArray, loading }) => {
+export const CreateModal: FC<CreateModalProps> = ({ isOpen, onClose, nftsArray, loading, setRefreshData, refreshData }) => {
     const [address, setAddress] = useState('');
     const [nft, setNft] = useState<NftsArray | null>(null)
     const [nftNonce, setNftNonce] = useState(0)
@@ -37,7 +39,6 @@ export const CreateModal: FC<CreateModalProps> = ({ isOpen, onClose, nftsArray, 
         const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
 
         const func = new ContractFunction("ESDTNFTTransfer")
-       // const s = new AddressValue(new Address('erd1lpg4rqgeshusq0n73zzflwkzs0f6mxr6kt3ttx2v7mqktcxyn60qghnw70'))
         const contractAddress = 'erd1qqqqqqqqqqqqqpgqcvp6jd8c8skujd24x974xam203lzwstpn60qu5hx9q'
         const addressContractBech32 = Address.fromBech32(contractAddress);
 
@@ -53,6 +54,12 @@ export const CreateModal: FC<CreateModalProps> = ({ isOpen, onClose, nftsArray, 
             data,
         });
     }, [triggerTx])
+
+    useEffect(() => {
+        if (transaction !== null) {
+            setRefreshData(!refreshData)
+        }
+    }, [transaction])
 
     useEffect(() => {
         if (nft !== null) {
@@ -135,10 +142,12 @@ export const CreateModal: FC<CreateModalProps> = ({ isOpen, onClose, nftsArray, 
                     </div>}
                 </ModalBody>
                 <ModalFooter>
-                    <button onClick={sendNft} className="deployModalButton"><i className="bi bi-lightning-charge-fill" style={{
+                    <button onClick={sendNft} disabled={nft === null ? true : false} className="deployModalButton" style={{
+                        opacity: nft === null ? "0.4" : "1"
+                    }}><i className="bi bi-lightning-charge-fill" style={{
                         color: "#00e673",
                         fontSize: "calc(16px + 0.1vw)",
-                        marginRight: "2px"
+                        marginRight: "2px",
                     }}></i>Create</button>
                 </ModalFooter>
             </ModalContent>

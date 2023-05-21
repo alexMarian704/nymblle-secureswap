@@ -20,6 +20,7 @@ const Home: NextPage = () => {
   const { address: userAddress } = useAccount();
   const [isUser, setIsUser] = useState(0);
   const [error, setError] = useState("");
+  const [refreshData, setRefreshData] = useState(false);
 
   const getContractData = async () => {
     const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
@@ -40,18 +41,18 @@ const Home: NextPage = () => {
     const queryResponse = await apiProvider.queryContract(query)
     const bundle = resultsParser.parseUntypedQueryResponse(queryResponse);
 
-    if(bundle.values[0].toString('hex') === "01"){
+    if (bundle.values[0].toString('hex') === "01") {
       setIsUser(1);
-    }else{
+    } else {
       setIsUser(2);
     }
   }
 
-  useEffect(()=>{
-    if(userAddress){
+  useEffect(() => {
+    if (userAddress) {
       getContractData();
     }
-  },[userAddress])
+  }, [userAddress, refreshData])
 
   return (
     <MainLayout>
@@ -96,14 +97,14 @@ const Home: NextPage = () => {
           </>
         }
       >
-        {isUser === 2 && <NewSwap setError={setError} />}
-        {isUser === 1 && <Swap setError={setError} />}
+        {isUser === 2 && <NewSwap setError={setError} setRefreshData={setRefreshData} refreshData={refreshData} />}
+        {isUser === 1 && <Swap setError={setError} setRefreshData={setRefreshData} refreshData={refreshData} />}
         <p style={{
-          width:"100%",
-          textAlign:"center",
-          marginTop:"20px",
-          fontSize:"calc(20px + 0.1vw)",
-          color:"#de1b0d"
+          width: "100%",
+          textAlign: "center",
+          marginTop: "20px",
+          fontSize: "calc(20px + 0.1vw)",
+          color: "#de1b0d"
         }}>{error}</p>
       </Authenticated>
     </MainLayout>

@@ -52,7 +52,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData }) =
 
         const queryNounce = contract.createQuery({
             func: new ContractFunction("getNftNonce"),
-            args: [new AddressValue(Address.fromBech32(bech32AddressSender))],
+            args: [new AddressValue(Address.fromBech32(userAddress))],
             caller: new Address(userAddress)
         });
 
@@ -80,7 +80,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData }) =
         //----------------------------------------------//
         const queryReceiver = contract.createQuery({
             func: new ContractFunction("getReceiverApprovement"),
-            args: [new AddressValue(Address.fromBech32(receiverAddress))],
+            args: [new AddressValue(Address.fromBech32(userAddress))],
             caller: new Address(userAddress)
         });
         const queryResponseReceiver = await apiProvider.queryContract(queryReceiver)
@@ -93,7 +93,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData }) =
         //----------------------------------------------//
         const querySender = contract.createQuery({
             func: new ContractFunction("getSenderApprovement"),
-            args: [new AddressValue(Address.fromBech32(senderAddress))],
+            args: [new AddressValue(Address.fromBech32(userAddress))],
             caller: new Address(userAddress)
         });
         const queryResponseSender = await apiProvider.queryContract(querySender)
@@ -114,7 +114,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData }) =
         //----------------------------------------------//
         const queryReceiver = contract.createQuery({
             func: new ContractFunction("getHasApproved"),
-            args: [new AddressValue(Address.fromBech32(receiverAddress))],
+            args: [new AddressValue(Address.fromBech32(userAddress))],
             caller: new Address(userAddress)
         });
         const queryResponseReceiver = await apiProvider.queryContract(queryReceiver)
@@ -127,7 +127,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData }) =
         //----------------------------------------------//
         const querySender = contract.createQuery({
             func: new ContractFunction("getHasApproved"),
-            args: [new AddressValue(Address.fromBech32(senderAddress))],
+            args: [new AddressValue(Address.fromBech32(userAddress))],
             caller: new Address(userAddress)
         });
         const queryResponseSender = await apiProvider.queryContract(querySender)

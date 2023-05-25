@@ -31,7 +31,7 @@ export const CreateModal: FC<CreateModalProps> = ({ isOpen, onClose, nftsArray, 
     const getNFTUrl = async () => {
         const response = await fetch(`https://devnet-api.multiversx.com/nfts/${nft?.identifier}`)
         const data = await response.json();
-        console.log(data);
+        //console.log(data);
         setNftNonce(data.nonce)
         setNftCollection(data.collection);
     }
@@ -54,6 +54,9 @@ export const CreateModal: FC<CreateModalProps> = ({ isOpen, onClose, nftsArray, 
             value: 0,
             data,
         });
+
+        setNft(null)
+        setAddress("")
     }, [triggerTx])
 
     useEffect(() => {
@@ -79,7 +82,6 @@ export const CreateModal: FC<CreateModalProps> = ({ isOpen, onClose, nftsArray, 
                 onClose()!
                 setNft(null)
             }}
-
         >
             <ModalOverlay />
             <ModalContent style={{
@@ -150,7 +152,7 @@ export const CreateModal: FC<CreateModalProps> = ({ isOpen, onClose, nftsArray, 
                     </div>}
                 </ModalBody>
                 <ModalFooter>
-                    <button onClick={sendNft} disabled={(nft === null || address === "") ? true : false} className="deployModalButton" style={{
+                    <button onClick={()=> {sendNft(); onClose();}} disabled={(nft === null || address === "") ? true : false} className="deployModalButton" style={{
                         opacity: (nft === null || address === "") ? "0.4" : "1"
                     }}><i className="bi bi-lightning-charge-fill" style={{
                         color: "#00e673",

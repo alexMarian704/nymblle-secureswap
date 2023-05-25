@@ -5,12 +5,13 @@ import { useAccount, useTransaction } from '@useelven/core';
 import { Dispatch, FC, SetStateAction, useCallback, useEffect, useState } from 'react';
 
 interface CreateModalProps {
-    onClose?: () => void;
+    onClose: () => void;
     isOpen: boolean;
     nftsArray: NftsArray[]
     loading: boolean;
     setRefreshData: Dispatch<SetStateAction<boolean>>;
     refreshData: boolean;
+    setLoadingMain: Dispatch<SetStateAction<boolean>>;
 }
 
 interface NftsArray {
@@ -19,7 +20,7 @@ interface NftsArray {
     fileType: string
 }
 
-export const CreateModal: FC<CreateModalProps> = ({ isOpen, onClose, nftsArray, loading, setRefreshData, refreshData }) => {
+export const CreateModal: FC<CreateModalProps> = ({ isOpen, onClose, nftsArray, loading, setRefreshData, refreshData, setLoadingMain }) => {
     const [address, setAddress] = useState('');
     const [nft, setNft] = useState<NftsArray | null>(null)
     const [nftNonce, setNftNonce] = useState(0)
@@ -61,6 +62,10 @@ export const CreateModal: FC<CreateModalProps> = ({ isOpen, onClose, nftsArray, 
         }
     }, [transaction])
 
+    useEffect(()=>{
+        setLoadingMain(pending)
+    },[pending])
+
     useEffect(() => {
         if (nft !== null) {
             getNFTUrl();
@@ -70,7 +75,10 @@ export const CreateModal: FC<CreateModalProps> = ({ isOpen, onClose, nftsArray, 
     return (
         <Modal
             isOpen={isOpen}
-            onClose={onClose!}
+            onClose={()=>{
+                onClose()!
+                setNft(null)
+            }}
 
         >
             <ModalOverlay />
@@ -142,8 +150,8 @@ export const CreateModal: FC<CreateModalProps> = ({ isOpen, onClose, nftsArray, 
                     </div>}
                 </ModalBody>
                 <ModalFooter>
-                    <button onClick={sendNft} disabled={nft === null ? true : false} className="deployModalButton" style={{
-                        opacity: nft === null ? "0.4" : "1"
+                    <button onClick={sendNft} disabled={(nft === null || address === "") ? true : false} className="deployModalButton" style={{
+                        opacity: (nft === null || address === "") ? "0.4" : "1"
                     }}><i className="bi bi-lightning-charge-fill" style={{
                         color: "#00e673",
                         fontSize: "calc(16px + 0.1vw)",

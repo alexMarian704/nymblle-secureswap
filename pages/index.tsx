@@ -2,6 +2,7 @@ import type { NextPage } from 'next';
 import {
   Box,
   Flex,
+  Spinner,
   Text,
 } from '@chakra-ui/react';
 import { MainLayout } from '../components/ui/MainLayout';
@@ -21,6 +22,7 @@ const Home: NextPage = () => {
   const [isUser, setIsUser] = useState(0);
   const [error, setError] = useState("");
   const [refreshData, setRefreshData] = useState(false);
+  const [loading, setLoading] = useState(false);
 
   const getContractData = async () => {
     const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
@@ -97,7 +99,7 @@ const Home: NextPage = () => {
           </>
         }
       >
-        {isUser === 2 && <NewSwap setError={setError} setRefreshData={setRefreshData} refreshData={refreshData} />}
+        {isUser === 2 && <NewSwap setError={setError} setRefreshData={setRefreshData} refreshData={refreshData} setLoading={setLoading} />}
         {isUser === 1 && <Swap setError={setError} setRefreshData={setRefreshData} refreshData={refreshData} />}
         <p style={{
           width: "100%",
@@ -106,6 +108,20 @@ const Home: NextPage = () => {
           fontSize: "calc(20px + 0.1vw)",
           color: "#de1b0d"
         }}>{error}</p>
+        {loading === true && <div className='loadingContainer' style={{
+          paddingTop:"100px"
+        }}>
+          <Spinner
+            speed='0.9s'
+            width="130px"
+            height="130px"
+            thickness='13px'
+            color='rgb(3,151,91)'
+            marginBottom="10px"
+          />
+          <p>Transaction loading....</p>
+          <p>Please wait</p>
+        </div>}
       </Authenticated>
     </MainLayout>
   );

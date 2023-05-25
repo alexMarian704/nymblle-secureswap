@@ -316,7 +316,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData }) =
                         fontSize: "calc(22px + 0.1vw)",
                     }}></i></h2>
                     <div className='displayGrid'>
-                        {(userAddress === receiver && receiver !== "") ? <EGLDComponent userAddress={userAddress} receiver={receiver} provided={provided} setProvided={setProvided} egldValue={egldValue} setEgldValue={setEgldValue} /> : <NFTComponent nftId={`${nftId}-${nftNonce}`} />}
+                        {(userAddress === receiver && receiver !== "") ? <EGLDComponent userAddress={userAddress} receiver={receiver} provided={provided} setProvided={setProvided} egldValue={egldValue} setEgldValue={setEgldValue} receiverHasVote={receiverHasVote} /> : <NFTComponent nftId={`${nftId}-${nftNonce}`} />}
                     </div>
                 </div>}
                 {loading === false && <div className='inputContainer'>
@@ -325,7 +325,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData }) =
                         fontSize: "calc(22px + 0.1vw)",
                     }}></i></h2>
                     <div className='displayGrid'>
-                        {(userAddress === receiver && receiver !== "") ? <NFTComponent nftId={`${nftId}-${nftNonce}`} /> : <EGLDComponent userAddress={userAddress} receiver={receiver} provided={provided} setProvided={setProvided} egldValue={egldValue} setEgldValue={setEgldValue} />}
+                        {(userAddress === receiver && receiver !== "") ? <NFTComponent nftId={`${nftId}-${nftNonce}`} /> : <EGLDComponent userAddress={userAddress} receiver={receiver} provided={provided} setProvided={setProvided} egldValue={egldValue} setEgldValue={setEgldValue} receiverHasVote={receiverHasVote} />}
                     </div>
                 </div>}
             </div>
@@ -353,7 +353,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData }) =
                     fontSize: "calc(19px + 0.1vw)",
                     marginRight: "2px"
                 }}></i>Waiting for receiver</button>}
-                {((userAddress === receiver && receiverApprovement === false && provided === false)) && <button onClick={sendEgld} className="deployModalButton"><i className="bi bi-check-lg" style={{
+                {((userAddress === receiver && receiverApprovement === false && provided === false && receiverHasVote === false)) && <button onClick={sendEgld} className="deployModalButton"><i className="bi bi-check-lg" style={{
                     color: "#00e673",
                     fontSize: "calc(19px + 0.1vw)",
                     marginRight: "2px"

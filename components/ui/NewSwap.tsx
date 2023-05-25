@@ -7,6 +7,7 @@ interface NewSwapProps {
     setError?: Dispatch<SetStateAction<string>>
     setRefreshData: Dispatch<SetStateAction<boolean>>;
     refreshData: boolean;
+    setLoading: Dispatch<SetStateAction<boolean>>;
 }
 
 interface NftsArray {
@@ -15,7 +16,7 @@ interface NftsArray {
     fileType: string;
 }
 
-export const NewSwap: FC<PropsWithChildren<NewSwapProps>> = ({ setRefreshData, refreshData }) => {
+export const NewSwap: FC<PropsWithChildren<NewSwapProps>> = ({ setRefreshData, refreshData, setLoading: setLoadingMain }) => {
     const { isOpen, onClose, onOpen } = useDisclosure();
     const [nftsArray, setNftsArray] = useState<NftsArray[]>([])
     const [loading, setLoading] = useState<boolean>(true);
@@ -82,7 +83,7 @@ export const NewSwap: FC<PropsWithChildren<NewSwapProps>> = ({ setRefreshData, r
                     ></i>
                 </button>
             </Flex>
-            <CreateModal isOpen={isOpen} onClose={onClose} nftsArray={nftsArray} loading={loading} setRefreshData={setRefreshData} refreshData={refreshData} />
+            <CreateModal isOpen={isOpen} onClose={onClose} nftsArray={nftsArray} loading={loading} setRefreshData={setRefreshData} refreshData={refreshData} setLoadingMain={setLoadingMain} />
         </Box>
     );
 };

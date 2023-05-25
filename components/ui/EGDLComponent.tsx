@@ -9,9 +9,10 @@ interface EGLDComponentProps {
     egldValue: string;
     setEgldValue: Dispatch<SetStateAction<string>>
     setProvided: Dispatch<SetStateAction<boolean>>
+    receiverHasVote: boolean
 }
 
-export const EGLDComponent: FC<EGLDComponentProps> = ({ userAddress, receiver, provided, setProvided, egldValue, setEgldValue }) => {
+export const EGLDComponent: FC<EGLDComponentProps> = ({ userAddress, receiver, provided, setProvided, egldValue, setEgldValue, receiverHasVote }) => {
 
     useEffect(() => {
         if (egldValue[0] !== ".") {
@@ -53,16 +54,18 @@ export const EGLDComponent: FC<EGLDComponentProps> = ({ userAddress, receiver, p
         }
     }
 
+    console.log(receiverHasVote, receiver, provided)
+
     return (
         <div className='egldInputComponent'>
             <div>
                 <img src="/egldimage.jpg" alt="MultiversX Logo" />
                 <h3>EGLD</h3>
             </div>
-            {receiver === userAddress && provided === false && <input type="text" placeholder='0.0' value={egldValue} onChange={(e) => {
+            {receiverHasVote === false && receiver === userAddress && provided === false && <input type="text" placeholder='0.0' value={egldValue} onChange={(e) => {
                 setEgldValue(e.target.value);
             }} />}
-            {receiver !== userAddress && provided === false && <h3 style={{
+            {((receiver === userAddress && receiverHasVote === true && provided === false) || (receiver !== userAddress && provided === false)) && <h3 style={{
                 textAlign: "center",
                 color: "rgb(210,210,210)"
             }}>Not provided</h3>}

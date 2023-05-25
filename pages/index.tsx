@@ -27,7 +27,7 @@ const Home: NextPage = () => {
   const getContractData = async () => {
     const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
 
-    const contractAddress = new Address("erd1qqqqqqqqqqqqqpgqcvp6jd8c8skujd24x974xam203lzwstpn60qu5hx9q")
+    const contractAddress = new Address("erd1qqqqqqqqqqqqqpgqf4vv2q9ks3jxxa8qqjqysnfv2yg6serxn60qv9l2qh")
     const contract = new SmartContract({ address: contractAddress })
 
     const address = Address.fromBech32(userAddress);

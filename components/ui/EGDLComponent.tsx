@@ -32,7 +32,7 @@ export const EGLDComponent: FC<EGLDComponentProps> = ({ userAddress, receiver, p
     const getAmount = async () => {
         const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
 
-        const contractAddress = new Address("erd1qqqqqqqqqqqqqpgqcvp6jd8c8skujd24x974xam203lzwstpn60qu5hx9q")
+        const contractAddress = new Address("erd1qqqqqqqqqqqqqpgqf4vv2q9ks3jxxa8qqjqysnfv2yg6serxn60qv9l2qh")
         const contract = new SmartContract({ address: contractAddress })
 
         const query = contract.createQuery({
@@ -53,8 +53,6 @@ export const EGLDComponent: FC<EGLDComponentProps> = ({ userAddress, receiver, p
             setEgldValue(String(parsedValue))
         }
     }
-
-    console.log(receiverHasVote, receiver, provided)
 
     return (
         <div className='egldInputComponent'>

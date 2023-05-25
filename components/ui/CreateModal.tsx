@@ -40,7 +40,7 @@ export const CreateModal: FC<CreateModalProps> = ({ isOpen, onClose, nftsArray, 
         const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
 
         const func = new ContractFunction("ESDTNFTTransfer")
-        const contractAddress = 'erd1qqqqqqqqqqqqqpgqcvp6jd8c8skujd24x974xam203lzwstpn60qu5hx9q'
+        const contractAddress = 'erd1qqqqqqqqqqqqqpgqf4vv2q9ks3jxxa8qqjqysnfv2yg6serxn60qv9l2qh'
         const addressContractBech32 = Address.fromBech32(contractAddress);
 
         const data = new ContractCallPayloadBuilder()
@@ -61,9 +61,11 @@ export const CreateModal: FC<CreateModalProps> = ({ isOpen, onClose, nftsArray, 
 
     useEffect(() => {
         if (transaction !== null) {
-            setRefreshData(!refreshData)
+            setTimeout(()=>{
+                setRefreshData(!refreshData)
+            },500)
         }
-    }, [transaction])
+    }, [transaction, pending])
 
     useEffect(()=>{
         setLoadingMain(pending)

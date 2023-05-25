@@ -32,6 +32,7 @@ export const MetaHead: FC<MetaHeadProps> = memo(
           property="og:image"
           content={metaImage || defaultMetaTags.image}
         />
+        <link rel="icon" href="/secureswap.png" type="image/png" />
         <meta property="og:url" content={metaUrl || dappHostname} />
         <meta name="twitter:card" content="summary_large_image" />
         <meta

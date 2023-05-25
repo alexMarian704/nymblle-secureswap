@@ -30,7 +30,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData }) =
     const getUserType = async () => {
         const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
 
-        const contractAddress = new Address("erd1qqqqqqqqqqqqqpgqcvp6jd8c8skujd24x974xam203lzwstpn60qu5hx9q")
+        const contractAddress = new Address("erd1qqqqqqqqqqqqqpgqf4vv2q9ks3jxxa8qqjqysnfv2yg6serxn60qv9l2qh")
         const contract = new SmartContract({ address: contractAddress })
 
         const query = contract.createQuery({
@@ -73,7 +73,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData }) =
 
     const getVote = async (receiverAddress: string, senderAddress: string) => {
         const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
-        const contractAddress = new Address("erd1qqqqqqqqqqqqqpgqcvp6jd8c8skujd24x974xam203lzwstpn60qu5hx9q")
+        const contractAddress = new Address("erd1qqqqqqqqqqqqqpgqf4vv2q9ks3jxxa8qqjqysnfv2yg6serxn60qv9l2qh")
         const contract = new SmartContract({ address: contractAddress })
         const resultsParser = new ResultsParser()
 
@@ -107,7 +107,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData }) =
 
     const getApprove = async (receiverAddress: string, senderAddress: string) => {
         const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
-        const contractAddress = new Address("erd1qqqqqqqqqqqqqpgqcvp6jd8c8skujd24x974xam203lzwstpn60qu5hx9q")
+        const contractAddress = new Address("erd1qqqqqqqqqqqqqpgqf4vv2q9ks3jxxa8qqjqysnfv2yg6serxn60qv9l2qh")
         const contract = new SmartContract({ address: contractAddress })
         const resultsParser = new ResultsParser()
 
@@ -140,7 +140,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData }) =
     }
 
     const approveSwap = () => {
-        const contractAddress = 'erd1qqqqqqqqqqqqqpgqcvp6jd8c8skujd24x974xam203lzwstpn60qu5hx9q'
+        const contractAddress = 'erd1qqqqqqqqqqqqqpgqf4vv2q9ks3jxxa8qqjqysnfv2yg6serxn60qv9l2qh'
         const func = new ContractFunction("approve")
 
         const data = new ContractCallPayloadBuilder()
@@ -157,7 +157,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData }) =
     }
 
     const claim = () => {
-        const contractAddress = 'erd1qqqqqqqqqqqqqpgqcvp6jd8c8skujd24x974xam203lzwstpn60qu5hx9q'
+        const contractAddress = 'erd1qqqqqqqqqqqqqpgqf4vv2q9ks3jxxa8qqjqysnfv2yg6serxn60qv9l2qh'
         const func = new ContractFunction("claim")
 
         const data = new ContractCallPayloadBuilder()
@@ -174,7 +174,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData }) =
     }
 
     const sendEgld = () => {
-        const contractAddress = 'erd1qqqqqqqqqqqqqpgqcvp6jd8c8skujd24x974xam203lzwstpn60qu5hx9q'
+        const contractAddress = 'erd1qqqqqqqqqqqqqpgqf4vv2q9ks3jxxa8qqjqysnfv2yg6serxn60qv9l2qh'
         const func = new ContractFunction("provide_tokens")
 
         const data = new ContractCallPayloadBuilder()
@@ -195,7 +195,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData }) =
     }
 
     const cancel = () => {
-        const contractAddress = 'erd1qqqqqqqqqqqqqpgqcvp6jd8c8skujd24x974xam203lzwstpn60qu5hx9q'
+        const contractAddress = 'erd1qqqqqqqqqqqqqpgqf4vv2q9ks3jxxa8qqjqysnfv2yg6serxn60qv9l2qh'
         const func = new ContractFunction("approve")
 
         const data = new ContractCallPayloadBuilder()
@@ -284,13 +284,20 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData }) =
 
     useEffect(()=>{
         if(transaction !== null){
-            setRefreshData(!refreshData)
+            setTimeout(()=>{
+                setRefreshData(!refreshData)
+            },500)
         }
     },[transaction])
 
     useEffect(() => {
         getUserType()
     }, [])
+
+    //console.log(receiverHasVote, senderHasVote, receiverApprovement, senderApprovement, provided)
+    // if(userAddress === sender)
+    //     console.log("da")
+    console.log(userAddress, receiver, sender)
 
     return (
         <Box

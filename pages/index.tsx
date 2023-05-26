@@ -16,9 +16,10 @@ import { Address, AddressValue, ContractFunction, ResultsParser, SmartContract }
 import { useAccount } from '@useelven/core';
 import { ApiNetworkProvider } from '@multiversx/sdk-network-providers/out';
 import { useEffect, useState } from 'react';
+import { shortenHash } from '../utils/shortenHash';
 
 const Home: NextPage = () => {
-  const { address: userAddress } = useAccount();
+  const { address: userAddress, balance } = useAccount();
   const [isUser, setIsUser] = useState(0);
   const [error, setError] = useState("");
   const [refreshData, setRefreshData] = useState(false);
@@ -99,6 +100,30 @@ const Home: NextPage = () => {
           </>
         }
       >
+        <div className='accountInfo'>
+          <h2 style={{
+            marginTop: "7px",
+            fontSize: "calc(19px + 0.1vw)",
+            borderLeft: "3px solid rgb(3, 151, 90)",
+            paddingLeft: "6px"
+          }}><span style={{
+            fontWeight: "900",
+            // textDecoration:"underline",
+            // textDecorationColor:"rgb(3, 151, 90)",
+            // textDecorationThickness:"2px"
+          }}>Address:</span> {shortenHash(userAddress, 11)}</h2>
+          <h3 style={{
+            marginTop: "7px",
+            fontSize: "calc(19px + 0.1vw)",
+            borderLeft: "3px solid rgb(3, 151, 90)",
+            paddingLeft: "6px"
+          }}><span style={{
+            fontWeight: "900",
+            // textDecoration:"underline",
+            // textDecorationColor:"rgb(3, 151, 90)",
+            // textDecorationThickness:"2px"
+          }}>Balance:</span> {(parseInt(balance) / 10 ** 18).toPrecision(3)} EGLD</h3>
+        </div>
         {isUser === 2 && <NewSwap setError={setError} setRefreshData={setRefreshData} refreshData={refreshData} setLoading={setLoading} />}
         {isUser === 1 && <Swap setError={setError} setRefreshData={setRefreshData} refreshData={refreshData} />}
         <p style={{
@@ -109,7 +134,7 @@ const Home: NextPage = () => {
           color: "#de1b0d"
         }}>{error}</p>
         {loading === true && <div className='loadingContainer' style={{
-          paddingTop:"100px"
+          paddingTop: "100px"
         }}>
           <Spinner
             speed='0.9s'

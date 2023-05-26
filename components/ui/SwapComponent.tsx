@@ -87,7 +87,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData }) =
         const bundleReceiver = resultsParser.parseUntypedQueryResponse(queryResponseReceiver);
         if (bundleReceiver.values[0].toString("hex") === "01") {
             setReceiverApprovement(true);
-        }else{
+        } else {
             setReceiverApprovement(false)
         }
         //----------------------------------------------//
@@ -100,7 +100,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData }) =
         const bundleSender = resultsParser.parseUntypedQueryResponse(queryResponseSender);
         if (bundleSender.values[0].toString("hex") === "01") {
             setSenderApprovement(true);
-        }else{
+        } else {
             setSenderApprovement(false);
         }
     }
@@ -121,7 +121,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData }) =
         const bundleReceiver = resultsParser.parseUntypedQueryResponse(queryResponseReceiver);
         if (bundleReceiver.values[0].toString("hex") === "01") {
             setReceiverHasVote(true);
-        }else{
+        } else {
             setReceiverHasVote(false)
         }
         //----------------------------------------------//
@@ -134,7 +134,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData }) =
         const bundleSender = resultsParser.parseUntypedQueryResponse(queryResponseSender);
         if (bundleSender.values[0].toString("hex") === "01") {
             setSenderHasVote(true);
-        }else{
+        } else {
             setSenderHasVote(false);
         }
     }
@@ -282,17 +282,23 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData }) =
     //     console.log(data);
     // }
 
-    useEffect(()=>{
-        if(transaction !== null){
-            setTimeout(()=>{
+    useEffect(() => {
+        if (transaction !== null) {
+            setTimeout(() => {
                 setRefreshData(!refreshData)
-            },500)
+            }, 500)
         }
-    },[transaction])
+    }, [transaction])
 
     useEffect(() => {
         getUserType()
     }, [])
+
+    useEffect(() => {
+        if (transaction !== null) {
+            getUserType()
+        }
+    }, [refreshData])
 
     //console.log(receiverHasVote, senderHasVote, receiverApprovement, senderApprovement, provided)
     // if(userAddress === sender)
@@ -369,7 +375,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData }) =
                     color: "#00e673",
                     fontSize: "calc(19px + 0.1vw)",
                     marginRight: "2px"
-                }}></i>Claim your {((userAddress === sender && senderHasVote === true && senderApprovement === false) || (userAddress === receiver && receiverHasVote === true && receiverApprovement === true)) ? "NFT" : "EGLD" }</button>}
+                }}></i>Claim your {((userAddress === sender && senderHasVote === true && senderApprovement === false) || (userAddress === receiver && receiverHasVote === true && receiverApprovement === true)) ? "NFT" : "EGLD"}</button>}
                 {((userAddress === sender && senderApprovement === true && receiverHasVote === false)) && <button className="deployModalButton"><i className="bi bi-person-fill" style={{
                     color: "#00e673",
                     fontSize: "calc(19px + 0.1vw)",

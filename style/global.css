@@ -411,6 +411,11 @@
     .swapContainer {
         flex-direction: column;
     }
+
+    .accountInfo{
+        display: flex;
+        flex-direction: column;
+    }
 }
 
 .inputContainer h2 {
@@ -492,4 +497,9 @@
 .selectNFT img:hover,
 .selectNFT video:hover {
     border: 3px solid rgb(3, 151, 90);
+}
+
+.accountInfo{
+    display: flex;
+    justify-content: space-between;
 }

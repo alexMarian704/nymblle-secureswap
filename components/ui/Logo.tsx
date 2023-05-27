@@ -14,7 +14,7 @@ export const Logo = () => {
         position="relative"
         userSelect="none"
       >
-        <Text
+        {/* <Text
           as="span"
           cursor="pointer"
           mb={0}
@@ -26,7 +26,13 @@ export const Logo = () => {
             color: "rgb(3, 111, 90)",
             marginRight: "7px"
           }}></i>{width > 630 ? "SecureSwap" : ""}
-        </Text>
+        </Text> */}
+        {width <= 630 && <img style={{
+          width:"calc(46px + 0.3vw)"
+        }} src="./secureswap.png" alt="Secureswap logo" />}
+        {width > 630 && <img style={{
+          width:"calc(240px + 1vw)"
+        }} src="./secureswap-logo-full.png" alt="Secureswap logo full" />}
       </Box>
     </NextLink>
   );

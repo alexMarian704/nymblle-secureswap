@@ -114,7 +114,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData }) =
         //----------------------------------------------//
         const queryReceiver = contract.createQuery({
             func: new ContractFunction("getHasApproved"),
-            args: [new AddressValue(Address.fromBech32(userAddress))],
+            args: [new AddressValue(Address.fromBech32(receiverAddress))],
             caller: new Address(userAddress)
         });
         const queryResponseReceiver = await apiProvider.queryContract(queryReceiver)
@@ -127,7 +127,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData }) =
         //----------------------------------------------//
         const querySender = contract.createQuery({
             func: new ContractFunction("getHasApproved"),
-            args: [new AddressValue(Address.fromBech32(userAddress))],
+            args: [new AddressValue(Address.fromBech32(senderAddress))],
             caller: new Address(userAddress)
         });
         const queryResponseSender = await apiProvider.queryContract(querySender)
@@ -283,12 +283,14 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData }) =
     // }
 
     useEffect(() => {
-        if (transaction !== null) {
+        if (transaction !== null && pending === false) {
             setTimeout(() => {
                 setRefreshData(!refreshData)
             }, 500)
         }
-    }, [transaction])
+    }, [transaction, pending])
+
+    //console.log(transaction, refreshData)
 
     useEffect(() => {
         getUserType()
@@ -300,10 +302,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData }) =
         }
     }, [refreshData])
 
-    //console.log(receiverHasVote, senderHasVote, receiverApprovement, senderApprovement, provided)
-    // if(userAddress === sender)
-    //     console.log("da")
-    //console.log(userAddress, receiver, sender)
+    // console.log(receiverHasVote, senderHasVote, receiverApprovement, senderApprovement, provided)
 
     return (
         <Box

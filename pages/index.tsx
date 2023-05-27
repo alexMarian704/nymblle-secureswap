@@ -131,7 +131,7 @@ const Home: NextPage = () => {
           textAlign: "center",
           marginTop: "20px",
           fontSize: "calc(20px + 0.1vw)",
-          color: "#de1b0d"
+          color: "#e80971"
         }}>{error}</p>
         {loading === true && <div className='loadingContainer' style={{
           paddingTop: "100px"

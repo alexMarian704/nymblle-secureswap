@@ -12,9 +12,10 @@ interface SwapProps {
     refreshData: boolean;
     receiver:string;
     setReceiver: Dispatch<SetStateAction<string>>;
+    contractMainAddress:string
 }
 
-export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData, receiver, setReceiver }) => {
+export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData, receiver, setReceiver, contractMainAddress }) => {
     const { pending, triggerTx, transaction } = useTransaction();
     const { address: userAddress } = useAccount();
     const [sender, setSender] = useState("");
@@ -32,7 +33,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData, rec
     const getUserType = async () => {
         const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
 
-        const contractAddress = new Address("erd1qqqqqqqqqqqqqpgq0wmlsr7zcpktfcgqk0wm4s2scyzjwmydn60qz8frzl")
+        const contractAddress = new Address(contractMainAddress)
         const contract = new SmartContract({ address: contractAddress })
 
         const query = contract.createQuery({
@@ -75,7 +76,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData, rec
 
     const getVote = async (receiverAddress: string, senderAddress: string) => {
         const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
-        const contractAddress = new Address("erd1qqqqqqqqqqqqqpgq0wmlsr7zcpktfcgqk0wm4s2scyzjwmydn60qz8frzl")
+        const contractAddress = new Address(contractMainAddress)
         const contract = new SmartContract({ address: contractAddress })
         const resultsParser = new ResultsParser()
 
@@ -109,7 +110,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData, rec
 
     const getApprove = async (receiverAddress: string, senderAddress: string) => {
         const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
-        const contractAddress = new Address("erd1qqqqqqqqqqqqqpgq0wmlsr7zcpktfcgqk0wm4s2scyzjwmydn60qz8frzl")
+        const contractAddress = new Address(contractMainAddress)
         const contract = new SmartContract({ address: contractAddress })
         const resultsParser = new ResultsParser()
 
@@ -142,7 +143,6 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData, rec
     }
 
     const approveSwap = () => {
-        const contractAddress = 'erd1qqqqqqqqqqqqqpgq0wmlsr7zcpktfcgqk0wm4s2scyzjwmydn60qz8frzl'
         const func = new ContractFunction("approve")
 
         const data = new ContractCallPayloadBuilder()
@@ -151,7 +151,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData, rec
             .build();
 
         triggerTx({
-            address: contractAddress,
+            address: contractMainAddress,
             gasLimit: 80000000,
             value: 0,
             data,
@@ -159,7 +159,6 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData, rec
     }
 
     const claim = () => {
-        const contractAddress = 'erd1qqqqqqqqqqqqqpgq0wmlsr7zcpktfcgqk0wm4s2scyzjwmydn60qz8frzl'
         const func = new ContractFunction("claim")
 
         const data = new ContractCallPayloadBuilder()
@@ -168,7 +167,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData, rec
             .build();
 
         triggerTx({
-            address: contractAddress,
+            address: contractMainAddress,
             gasLimit: 80000000,
             value: 0,
             data,
@@ -176,7 +175,6 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData, rec
     }
 
     const sendEgld = () => {
-        const contractAddress = 'erd1qqqqqqqqqqqqqpgq0wmlsr7zcpktfcgqk0wm4s2scyzjwmydn60qz8frzl'
         const func = new ContractFunction("provide_tokens")
 
         const data = new ContractCallPayloadBuilder()
@@ -186,7 +184,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData, rec
 
         if (Number(egldValue) > 0) {
             triggerTx({
-                address: contractAddress,
+                address: contractMainAddress,
                 gasLimit: 80000000,
                 value: Number(egldValue) * (10 ** 18),
                 data,
@@ -197,7 +195,6 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData, rec
     }
 
     const cancel = () => {
-        const contractAddress = 'erd1qqqqqqqqqqqqqpgq0wmlsr7zcpktfcgqk0wm4s2scyzjwmydn60qz8frzl'
         const func = new ContractFunction("approve")
 
         const data = new ContractCallPayloadBuilder()
@@ -206,7 +203,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData, rec
             .build();
 
         triggerTx({
-            address: contractAddress,
+            address: contractMainAddress,
             gasLimit: 80000000,
             value: 0,
             data,
@@ -278,12 +275,6 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData, rec
         return result;
     }
 
-    // const getNFTs = async () => {
-    //     const response = await fetch("https://devnet-api.multiversx.com/accounts/erd1lpg4rqgeshusq0n73zzflwkzs0f6mxr6kt3ttx2v7mqktcxyn60qghnw70/nfts")
-    //     const data = await response.json();
-    //     console.log(data);
-    // }
-
     useEffect(() => {
         if (transaction !== null && pending === false) {
             setTimeout(() => {
@@ -291,8 +282,6 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData, rec
             }, 500)
         }
     }, [transaction, pending])
-
-    //console.log(transaction, refreshData)
 
     useEffect(() => {
         getUserType()
@@ -303,8 +292,6 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData, rec
             getUserType()
         }
     }, [refreshData])
-
-    // console.log(receiverHasVote, senderHasVote, receiverApprovement, senderApprovement, provided)
 
     return (
         <Box
@@ -330,7 +317,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData, rec
                         fontSize: "calc(22px + 0.1vw)",
                     }}></i></h2>
                     <div className='displayGrid'>
-                        {(userAddress === receiver && receiver !== "") ? <EGLDComponent userAddress={userAddress} receiver={receiver} provided={provided} setProvided={setProvided} egldValue={egldValue} setEgldValue={setEgldValue} receiverHasVote={receiverHasVote} /> : <NFTComponent nftId={`${nftId}-${nftNonce}`} />}
+                        {(userAddress === receiver && receiver !== "") ? <EGLDComponent userAddress={userAddress} receiver={receiver} provided={provided} setProvided={setProvided} egldValue={egldValue} setEgldValue={setEgldValue} receiverHasVote={receiverHasVote} contractMainAddress={contractMainAddress} /> : <NFTComponent nftId={`${nftId}-${nftNonce}`} />}
                     </div>
                 </div>}
                 {loading === false && <div className='inputContainer'>
@@ -339,7 +326,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData, rec
                         fontSize: "calc(22px + 0.1vw)",
                     }}></i></h2>
                     <div className='displayGrid'>
-                        {(userAddress === receiver && receiver !== "") ? <NFTComponent nftId={`${nftId}-${nftNonce}`} /> : <EGLDComponent userAddress={userAddress} receiver={receiver} provided={provided} setProvided={setProvided} egldValue={egldValue} setEgldValue={setEgldValue} receiverHasVote={receiverHasVote} />}
+                        {(userAddress === receiver && receiver !== "") ? <NFTComponent nftId={`${nftId}-${nftNonce}`} /> : <EGLDComponent userAddress={userAddress} receiver={receiver} provided={provided} setProvided={setProvided} egldValue={egldValue} setEgldValue={setEgldValue} receiverHasVote={receiverHasVote} contractMainAddress={contractMainAddress} />}
                     </div>
                 </div>}
             </div>

@@ -15,10 +15,14 @@ import { Swap } from '../components/ui/SwapComponent';
 import { Address, AddressValue, ContractFunction, ResultsParser, SmartContract } from '@multiversx/sdk-core/out';
 import { useAccount } from '@useelven/core';
 import { ApiNetworkProvider } from '@multiversx/sdk-network-providers/out';
-import { useEffect, useState } from 'react';
+import { FC, useEffect, useState } from 'react';
 import { shortenHash } from '../utils/shortenHash';
 
-const Home: NextPage = () => {
+type SwapProps = {
+  contractMainAddress:string
+}
+
+const Home = ({ contractMainAddress } : SwapProps) => {
   const { address: userAddress, balance } = useAccount();
   const [isUser, setIsUser] = useState(0);
   const [error, setError] = useState("");
@@ -29,7 +33,7 @@ const Home: NextPage = () => {
   const getContractData = async () => {
     const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
 
-    const contractAddress = new Address("erd1qqqqqqqqqqqqqpgq0wmlsr7zcpktfcgqk0wm4s2scyzjwmydn60qz8frzl")
+    const contractAddress = new Address(contractMainAddress)
     const contract = new SmartContract({ address: contractAddress })
 
     const address = Address.fromBech32(userAddress);
@@ -136,8 +140,8 @@ const Home: NextPage = () => {
             // textDecorationThickness:"2px"
           }}>Receiver:</span> {shortenHash(receiver, 11)}</h3>}
         </div>
-        {isUser === 2 && <NewSwap setError={setError} setRefreshData={setRefreshData} refreshData={refreshData} setLoading={setLoading} />}
-        {isUser === 1 && <Swap setError={setError} setRefreshData={setRefreshData} refreshData={refreshData} receiver={receiver} setReceiver={setReceiver} />}
+        {isUser === 2 && <NewSwap setError={setError} setRefreshData={setRefreshData} refreshData={refreshData} setLoading={setLoading} contractMainAddress={contractMainAddress} />}
+        {isUser === 1 && <Swap setError={setError} setRefreshData={setRefreshData} refreshData={refreshData} receiver={receiver} setReceiver={setReceiver} contractMainAddress={contractMainAddress} />}
         <p style={{
           width: "100%",
           textAlign: "center",

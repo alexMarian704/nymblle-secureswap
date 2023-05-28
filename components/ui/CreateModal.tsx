@@ -12,6 +12,7 @@ interface CreateModalProps {
     setRefreshData: Dispatch<SetStateAction<boolean>>;
     refreshData: boolean;
     setLoadingMain: Dispatch<SetStateAction<boolean>>;
+    contractMainAddress:string
 }
 
 interface NftsArray {
@@ -20,7 +21,7 @@ interface NftsArray {
     fileType: string
 }
 
-export const CreateModal: FC<CreateModalProps> = ({ isOpen, onClose, nftsArray, loading, setRefreshData, refreshData, setLoadingMain }) => {
+export const CreateModal: FC<CreateModalProps> = ({ isOpen, onClose, nftsArray, loading, setRefreshData, refreshData, setLoadingMain, contractMainAddress }) => {
     const [address, setAddress] = useState('');
     const [nft, setNft] = useState<NftsArray | null>(null)
     const [nftNonce, setNftNonce] = useState(0)
@@ -40,7 +41,7 @@ export const CreateModal: FC<CreateModalProps> = ({ isOpen, onClose, nftsArray, 
     const getIsUser = async () => {
         const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
 
-        const contractAddress = new Address("erd1qqqqqqqqqqqqqpgq0wmlsr7zcpktfcgqk0wm4s2scyzjwmydn60qz8frzl")
+        const contractAddress = new Address(contractMainAddress)
         const contract = new SmartContract({ address: contractAddress })
 
         const addressInput = Address.fromBech32(address);
@@ -64,12 +65,9 @@ export const CreateModal: FC<CreateModalProps> = ({ isOpen, onClose, nftsArray, 
     }
 
     const sendNft = useCallback(async () => {
-        const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
-
         if (await getIsUser() === false) {
             const func = new ContractFunction("ESDTNFTTransfer")
-            const contractAddress = 'erd1qqqqqqqqqqqqqpgq0wmlsr7zcpktfcgqk0wm4s2scyzjwmydn60qz8frzl'
-            const addressContractBech32 = Address.fromBech32(contractAddress);
+            const addressContractBech32 = Address.fromBech32(contractMainAddress);
 
             const data = new ContractCallPayloadBuilder()
                 .setFunction(func)

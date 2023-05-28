@@ -16,6 +16,7 @@ const NextJSDappTemplate = ({ Component, pageProps }: AppProps) => {
       : {}),
   });
   const [showChild, setShowChild] = useState(false);
+  const contractMainAddress = 'erd1qqqqqqqqqqqqqpgq0wmlsr7zcpktfcgqk0wm4s2scyzjwmydn60qz8frzl'
 
   useEffect(() => {
     setShowChild(true);
@@ -29,7 +30,7 @@ const NextJSDappTemplate = ({ Component, pageProps }: AppProps) => {
   } else {
     return (
       <ChakraProvider theme={theme}>
-        <Component {...pageProps} />
+        <Component {...pageProps} contractMainAddress={contractMainAddress} />
       </ChakraProvider>
     );
   }

@@ -411,7 +411,9 @@
     .swapContainer {
         flex-direction: column;
     }
+}
 
+@media only screen and (max-width: 690px) {
     .accountInfo{
         display: flex;
         flex-direction: column;

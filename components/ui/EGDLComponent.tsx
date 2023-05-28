@@ -10,9 +10,10 @@ interface EGLDComponentProps {
     setEgldValue: Dispatch<SetStateAction<string>>
     setProvided: Dispatch<SetStateAction<boolean>>
     receiverHasVote: boolean
+    contractMainAddress:string
 }
 
-export const EGLDComponent: FC<EGLDComponentProps> = ({ userAddress, receiver, provided, setProvided, egldValue, setEgldValue, receiverHasVote }) => {
+export const EGLDComponent: FC<EGLDComponentProps> = ({ userAddress, receiver, provided, setProvided, egldValue, setEgldValue, receiverHasVote, contractMainAddress }) => {
 
     useEffect(() => {
         if (egldValue[0] !== ".") {
@@ -32,7 +33,7 @@ export const EGLDComponent: FC<EGLDComponentProps> = ({ userAddress, receiver, p
     const getAmount = async () => {
         const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
 
-        const contractAddress = new Address("erd1qqqqqqqqqqqqqpgq0wmlsr7zcpktfcgqk0wm4s2scyzjwmydn60qz8frzl")
+        const contractAddress = new Address(contractMainAddress)
         const contract = new SmartContract({ address: contractAddress })
 
         const query = contract.createQuery({

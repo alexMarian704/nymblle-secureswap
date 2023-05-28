@@ -53,6 +53,7 @@ const Home = ({ contractMainAddress } : SwapProps) => {
       setIsUser(1);
     } else {
       setIsUser(2);
+      setReceiverInfo("")
     }
   }
 

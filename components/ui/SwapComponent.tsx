@@ -10,13 +10,15 @@ interface SwapProps {
     setError: Dispatch<SetStateAction<string>>;
     setRefreshData: Dispatch<SetStateAction<boolean>>;
     refreshData: boolean;
+    receiver:string;
+    setReceiver: Dispatch<SetStateAction<string>>;
 }
 
-export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData }) => {
+export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData, receiver, setReceiver }) => {
     const { pending, triggerTx, transaction } = useTransaction();
     const { address: userAddress } = useAccount();
     const [sender, setSender] = useState("");
-    const [receiver, setReceiver] = useState("");
+    //const [receiver, setReceiver] = useState("");
     const [receiverApprovement, setReceiverApprovement] = useState(false);
     const [senderApprovement, setSenderApprovement] = useState(false);
     const [loading, setLoading] = useState(true);

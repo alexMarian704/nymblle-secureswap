@@ -24,6 +24,7 @@ const Home: NextPage = () => {
   const [error, setError] = useState("");
   const [refreshData, setRefreshData] = useState(false);
   const [loading, setLoading] = useState(false);
+  const [receiver, setReceiver] = useState("");
 
   const getContractData = async () => {
     const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
@@ -112,7 +113,7 @@ const Home: NextPage = () => {
             // textDecorationColor:"rgb(3, 151, 90)",
             // textDecorationThickness:"2px"
           }}>Address:</span> {shortenHash(userAddress, 11)}</h2>
-          <h3 style={{
+          {receiver === "" && <h3 style={{
             marginTop: "7px",
             fontSize: "calc(19px + 0.1vw)",
             borderLeft: "3px solid rgb(3, 151, 90)",
@@ -122,10 +123,21 @@ const Home: NextPage = () => {
             // textDecoration:"underline",
             // textDecorationColor:"rgb(3, 151, 90)",
             // textDecorationThickness:"2px"
-          }}>Balance:</span> {(parseInt(balance) / 10 ** 18).toPrecision(3)} EGLD</h3>
+          }}>Balance:</span> {(parseInt(balance) / 10 ** 18).toPrecision(3)} EGLD</h3>}
+          {receiver !== "" && <h3 style={{
+            marginTop: "7px",
+            fontSize: "calc(19px + 0.1vw)",
+            borderLeft: "3px solid rgb(3, 151, 90)",
+            paddingLeft: "6px"
+          }}><span style={{
+            fontWeight: "900",
+            // textDecoration:"underline",
+            // textDecorationColor:"rgb(3, 151, 90)",
+            // textDecorationThickness:"2px"
+          }}>Receiver:</span> {shortenHash(receiver, 11)}</h3>}
         </div>
         {isUser === 2 && <NewSwap setError={setError} setRefreshData={setRefreshData} refreshData={refreshData} setLoading={setLoading} />}
-        {isUser === 1 && <Swap setError={setError} setRefreshData={setRefreshData} refreshData={refreshData} />}
+        {isUser === 1 && <Swap setError={setError} setRefreshData={setRefreshData} refreshData={refreshData} receiver={receiver} setReceiver={setReceiver} />}
         <p style={{
           width: "100%",
           textAlign: "center",

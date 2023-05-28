@@ -10,16 +10,16 @@ interface SwapProps {
     setError: Dispatch<SetStateAction<string>>;
     setRefreshData: Dispatch<SetStateAction<boolean>>;
     refreshData: boolean;
-    receiver:string;
-    setReceiver: Dispatch<SetStateAction<string>>;
+    receiverInfo:string;
+    setReceiverInfo: Dispatch<SetStateAction<string>>;
     contractMainAddress:string
 }
 
-export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData, receiver, setReceiver, contractMainAddress }) => {
+export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData, receiverInfo, setReceiverInfo, contractMainAddress }) => {
     const { pending, triggerTx, transaction } = useTransaction();
     const { address: userAddress } = useAccount();
     const [sender, setSender] = useState("");
-    //const [receiver, setReceiver] = useState("");
+    const [receiver, setReceiver] = useState("");
     const [receiverApprovement, setReceiverApprovement] = useState(false);
     const [senderApprovement, setSenderApprovement] = useState(false);
     const [loading, setLoading] = useState(true);
@@ -62,6 +62,12 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData, rec
         const resultsParserNounce = new ResultsParser()
         const queryResponseNounce = await apiProvider.queryContract(queryNounce)
         const bundleNounce = resultsParserNounce.parseUntypedQueryResponse(queryResponseNounce);
+
+        if(userAddress === bech32AddressReceiver){
+            setReceiverInfo(bech32AddressSender)
+        }else{
+            setReceiverInfo(bech32AddressReceiver)
+        }
 
         setNftNonce(bundleNounce.values[0].toString("hex"))
         setNftID(hexToReadableString(decodeData.nft_id))

@@ -28,7 +28,7 @@ const Home = ({ contractMainAddress } : SwapProps) => {
   const [error, setError] = useState("");
   const [refreshData, setRefreshData] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [receiver, setReceiver] = useState("");
+  const [receiverInfo, setReceiverInfo] = useState("");
 
   const getContractData = async () => {
     const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
@@ -117,7 +117,7 @@ const Home = ({ contractMainAddress } : SwapProps) => {
             // textDecorationColor:"rgb(3, 151, 90)",
             // textDecorationThickness:"2px"
           }}>Address:</span> {shortenHash(userAddress, 11)}</h2>
-          {receiver === "" && <h3 style={{
+          {receiverInfo === "" && <h3 style={{
             marginTop: "7px",
             fontSize: "calc(19px + 0.1vw)",
             borderLeft: "3px solid rgb(3, 151, 90)",
@@ -128,7 +128,7 @@ const Home = ({ contractMainAddress } : SwapProps) => {
             // textDecorationColor:"rgb(3, 151, 90)",
             // textDecorationThickness:"2px"
           }}>Balance:</span> {(parseInt(balance) / 10 ** 18).toPrecision(3)} EGLD</h3>}
-          {receiver !== "" && <h3 style={{
+          {receiverInfo !== "" && <h3 style={{
             marginTop: "7px",
             fontSize: "calc(19px + 0.1vw)",
             borderLeft: "3px solid rgb(3, 151, 90)",
@@ -138,10 +138,10 @@ const Home = ({ contractMainAddress } : SwapProps) => {
             // textDecoration:"underline",
             // textDecorationColor:"rgb(3, 151, 90)",
             // textDecorationThickness:"2px"
-          }}>Receiver:</span> {shortenHash(receiver, 11)}</h3>}
+          }}>Recipient:</span> {shortenHash(receiverInfo, 11)}</h3>}
         </div>
         {isUser === 2 && <NewSwap setError={setError} setRefreshData={setRefreshData} refreshData={refreshData} setLoading={setLoading} contractMainAddress={contractMainAddress} />}
-        {isUser === 1 && <Swap setError={setError} setRefreshData={setRefreshData} refreshData={refreshData} receiver={receiver} setReceiver={setReceiver} contractMainAddress={contractMainAddress} />}
+        {isUser === 1 && <Swap setError={setError} setRefreshData={setRefreshData} refreshData={refreshData} receiverInfo={receiverInfo} setReceiverInfo={setReceiverInfo} contractMainAddress={contractMainAddress} />}
         <p style={{
           width: "100%",
           textAlign: "center",

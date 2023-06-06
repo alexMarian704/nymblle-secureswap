@@ -35,7 +35,6 @@ const Home = ({ contractMainAddress } : SwapProps) => {
 
     const contractAddress = new Address(contractMainAddress)
     const contract = new SmartContract({ address: contractAddress })
-
     const address = Address.fromBech32(userAddress);
 
     const query = contract.createQuery({

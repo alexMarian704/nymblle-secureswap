@@ -343,14 +343,14 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData, rec
                     fontSize: "calc(19px + 0.1vw)",
                     marginBottom: "8px"
                 }}>Swap has ended, please claim</h2>}
-                {((userAddress === sender && senderApprovement === false && senderHasVote === false) || (userAddress === receiver && receiverApprovement === false && receiverHasVote === false)) && <button onClick={cancel} className="deployModalButton" style={{
+                {((userAddress === sender && senderApprovement === false && senderHasVote === false && ((receiverHasVote === false && receiverApprovement === false) || (receiverHasVote === true && receiverApprovement === true))) || (userAddress === receiver && receiverApprovement === false && receiverHasVote === false && ((senderHasVote === false && senderApprovement === false) || (senderHasVote === true && senderApprovement === true)))) && <button onClick={cancel} className="deployModalButton" style={{
                     marginBottom: "6px"
                 }}><i className="bi bi-x-lg" style={{
                     color: "#ed2400",
                     fontSize: "calc(16px + 0.1vw)",
                     marginRight: "2px"
                 }}></i>Cancel</button>}
-                {((userAddress === sender && senderApprovement === false && provided === true && senderHasVote === false) || (userAddress === receiver && receiverApprovement === false && provided === true && receiverHasVote === false)) && <button onClick={approveSwap} className="deployModalButton"><i className="bi bi-check-lg" style={{
+                {((userAddress === sender && senderApprovement === false && provided === true && senderHasVote === false && (!(receiverHasVote === true && receiverApprovement === false))) || (userAddress === receiver && receiverApprovement === false && provided === true && receiverHasVote === false && (!(senderHasVote === true && senderApprovement === false)))) && <button onClick={approveSwap} className="deployModalButton"><i className="bi bi-check-lg" style={{
                     color: "#00e673",
                     fontSize: "calc(19px + 0.1vw)",
                     marginRight: "2px"

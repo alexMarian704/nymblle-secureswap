@@ -365,7 +365,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData, rec
                     fontSize: "calc(19px + 0.1vw)",
                     marginRight: "2px"
                 }}></i>Send EGLD</button>}
-                {((senderApprovement === true && receiverApprovement === true) || (userAddress === sender && senderHasVote === true && senderApprovement === false) || (userAddress === receiver && receiverHasVote === true && receiverApprovement === false)) && <button onClick={claim} className="deployModalButton"><i className="bi bi-check2-all" style={{
+                {((senderApprovement === true && receiverApprovement === true) || (senderHasVote === true && senderApprovement === false) || (receiverHasVote === true && receiverApprovement === false)) && <button onClick={claim} className="deployModalButton"><i className="bi bi-check2-all" style={{
                     color: "#00e673",
                     fontSize: "calc(19px + 0.1vw)",
                     marginRight: "2px"

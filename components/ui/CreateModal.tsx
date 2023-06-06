@@ -31,7 +31,7 @@ export const CreateModal: FC<CreateModalProps> = ({ isOpen, onClose, nftsArray, 
     const [errorIsUser, setErrorIsUser] = useState("");
 
     const getNFTUrl = async () => {
-        const response = await fetch(`https://devnet-api.multiversx.com/nfts/${nft?.identifier}`)
+        const response = await fetch(`https://api.multiversx.com/nfts/${nft?.identifier}`)
         const data = await response.json();
         //console.log(data);
         setNftNonce(data.nonce)
@@ -39,7 +39,7 @@ export const CreateModal: FC<CreateModalProps> = ({ isOpen, onClose, nftsArray, 
     }
 
     const getIsUser = async () => {
-        const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
+        const apiProvider = new ApiNetworkProvider("https://api.multiversx.com")
 
         const contractAddress = new Address(contractMainAddress)
         const contract = new SmartContract({ address: contractAddress })

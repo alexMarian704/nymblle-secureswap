@@ -16,7 +16,7 @@ const NextJSDappTemplate = ({ Component, pageProps }: AppProps) => {
       : {}),
   });
   const [showChild, setShowChild] = useState(false);
-  const contractMainAddress = 'erd1qqqqqqqqqqqqqpgq0wmlsr7zcpktfcgqk0wm4s2scyzjwmydn60qz8frzl'
+  const contractMainAddress = 'erd1qqqqqqqqqqqqqpgq826fjv4x2j9mhlj5ygwa8yn95e9gvd7l3epqzn5ql3'
 
   useEffect(() => {
     setShowChild(true);

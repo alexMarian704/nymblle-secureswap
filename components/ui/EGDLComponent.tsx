@@ -31,7 +31,7 @@ export const EGLDComponent: FC<EGLDComponentProps> = ({ userAddress, receiver, p
     }, [])
 
     const getAmount = async () => {
-        const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
+        const apiProvider = new ApiNetworkProvider("https://api.multiversx.com")
 
         const contractAddress = new Address(contractMainAddress)
         const contract = new SmartContract({ address: contractAddress })

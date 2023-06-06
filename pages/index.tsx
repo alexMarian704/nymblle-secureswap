@@ -31,7 +31,7 @@ const Home = ({ contractMainAddress } : SwapProps) => {
   const [receiverInfo, setReceiverInfo] = useState("");
 
   const getContractData = async () => {
-    const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
+    const apiProvider = new ApiNetworkProvider("https://api.multiversx.com")
 
     const contractAddress = new Address(contractMainAddress)
     const contract = new SmartContract({ address: contractAddress })

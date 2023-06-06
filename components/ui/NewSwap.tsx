@@ -24,7 +24,7 @@ export const NewSwap: FC<PropsWithChildren<NewSwapProps>> = ({ setRefreshData, r
     const { address } = useAccount();
 
     const getNFTs = async () => {
-        const response = await fetch(`https://devnet-api.multiversx.com/accounts/${address}/nfts`)
+        const response = await fetch(`https://api.multiversx.com/accounts/${address}/nfts`)
         const data = await response.json();
 
         const nftsArray = [];

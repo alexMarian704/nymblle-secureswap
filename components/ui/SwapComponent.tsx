@@ -31,7 +31,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData, rec
     const [egldValue, setEgldValue] = useState("");
 
     const getUserType = async () => {
-        const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
+        const apiProvider = new ApiNetworkProvider("https://api.multiversx.com")
 
         const contractAddress = new Address(contractMainAddress)
         const contract = new SmartContract({ address: contractAddress })
@@ -81,7 +81,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData, rec
     }
 
     const getVote = async (receiverAddress: string, senderAddress: string) => {
-        const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
+        const apiProvider = new ApiNetworkProvider("https://api.multiversx.com")
         const contractAddress = new Address(contractMainAddress)
         const contract = new SmartContract({ address: contractAddress })
         const resultsParser = new ResultsParser()
@@ -115,7 +115,7 @@ export const Swap: FC<SwapProps> = ({ setError, setRefreshData, refreshData, rec
     }
 
     const getApprove = async (receiverAddress: string, senderAddress: string) => {
-        const apiProvider = new ApiNetworkProvider("https://devnet-api.multiversx.com")
+        const apiProvider = new ApiNetworkProvider("https://api.multiversx.com")
         const contractAddress = new Address(contractMainAddress)
         const contract = new SmartContract({ address: contractAddress })
         const resultsParser = new ResultsParser()
